@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using IMHO.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IMHO.Controllers;
 
@@ -22,6 +23,16 @@ public class HomeController : Controller
     {
         return View();
     }
+
+
+    [Authorize]
+    public IActionResult Secured()
+    {
+        return View();
+
+    }
+
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

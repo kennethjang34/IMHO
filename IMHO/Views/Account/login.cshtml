@@ -1,0 +1,17 @@
+@{
+ViewData["Title"]="Login";
+var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<h1>Login</h1>
+<form action="sessions?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)"
+	  method="post">
+	<input type="text"
+		   name="Id"
+		   placeholder="ID" />
+	<input type="text"
+		   name="Password"
+		   placeholder="Password" />
+	<input type="submit"
+		   value="login" />
+</form>
