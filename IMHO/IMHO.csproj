@@ -10,13 +10,19 @@
         <PrivateAssets>all</PrivateAssets>
       </PackageReference> 
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
-      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation">
-        <Version>6.0.7</Version>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.7">
       </PackageReference> 
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" /> 
       <PackageReference Include="MySqlConnector" Version="2.1.10" /> 
       <Watch Include="**/*.cshtml;*.razor;*.js;*.css" Exclude="**\obj\**\*;bin\**\*" />
-      
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <None Remove="Microsoft.AspNetCore.Authentication.Google" />
+  </ItemGroup>
 </Project>

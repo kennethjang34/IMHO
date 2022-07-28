@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using IMHO.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+
 
 namespace IMHO.Controllers;
 
@@ -25,12 +27,17 @@ public class HomeController : Controller
     }
 
 
-    [Authorize]
-    public IActionResult Secured()
+    [Authorize(Roles = "Admin")]
+    //    [Authorize]
+    public async Task<IActionResult> Secured()
     {
+        var idToken = await HttpContext.GetTokenAsync("id_token");
         return View();
 
     }
+
+
+
 
 
 

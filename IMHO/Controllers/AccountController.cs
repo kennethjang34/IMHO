@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using IMHO.Data;
 using IMHO.Models;
-using System.Security.Principal;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IMHO.Controllers;
 public class AccountController : Controller
@@ -89,7 +89,7 @@ public class AccountController : Controller
 
 
 
-
+    //This action logs the user in
     [HttpPost("sessions")]
     //[ValidateAntiForgeryToken]
     public async Task<IActionResult> Sessions(Account user, string returnUrl)
@@ -99,113 +99,59 @@ public class AccountController : Controller
             var claims = new List<Claim>();
             claims.Add(new Claim("Id", user.Id));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            claims.Add(new Claim(ClaimTypes.Name, "Junhyeok"));
+            //claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
-            return Redirect(returnUrl);
+            if (returnUrl != null)
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+
+            }
+
             //return RedirectToAction($"{user.Id}");
         }
-        return View();
+        TempData["Error"] = "Error. User ID or Password is not valid";
+        return View("Login");
     }
 
+    [HttpGet("denied")]
+    public IActionResult Denied()
+    {
+        return View();
+
+    }
+
+
+
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return Redirect(@"https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://localhost:7089");
+        //return Redirect("/");
+    }
+
+    [HttpGet("login/{provider}")]
+    public IActionResult LoginExternal([FromRoute] string provider, [FromQuery] string returnUrl)
+    {
+        if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
+        {
+            RedirectToAction("", "Home");
+        }
+        returnUrl = string.IsNullOrEmpty(returnUrl) ? "/" : returnUrl;
+        var authenticationProperties = new AuthenticationProperties { RedirectUri = returnUrl };
+        //await HttpContext.ChallengeAsync(provider, authenticationProperties).ConfigureAwait(false);
+        return new ChallengeResult(provider, authenticationProperties);
+    }
 }
 
 
 
 
-//GET
-//public IActionResult Create()
-//{
-//return View();
-//}
-
-
-//example reference
-////POST
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public IActionResult Create(Category obj)
-//{
-//if (obj.Name == obj.DisplayOrder.ToString()) { ModelState.AddModelError("Name", "The DisplayOrder cannot exactly match the Name."); }
-//if (ModelState.IsValid)
-//{
-//_db.Categories.Add(obj);
-//_db.SaveChanges();
-//TempData["success"] = "Category created succesfully";
-//return RedirectToAction("Index");
-//}
-//return View(obj);
-//}
-
-
-////GET
-//public IActionResult Edit(int? id)
-//{
-//if (id == null || id == 0)
-//{
-//return NotFound();
-//}
-
-//var categoryFromDb = _db.Categories.Find(id);
-////var categoryFromDbFirst = _db.Categories.FirstOrDefault(u => u.Id == id);
-////var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
-
-//if (categoryFromDb == null)
-//{
-//return NotFound();
-//}
-//return View(categoryFromDb);
-//}
-
-//[HttpPost]
-//[ValidateAntiForgeryToken]
-//public IActionResult Edit(Category obj)
-//{
-//if (obj.Name == obj.DisplayOrder.ToString())
-//{
-//ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name");
-
-//}
-//if (ModelState.IsValid)
-//{
-//_db.Categories.Update(obj);
-
-//_db.SaveChanges();
-//TempData["success"] = "Category updated succesfully";
-//return RedirectToAction("Index");
-//}
-//return View(obj);
-//}
-//public IActionResult Delete(int? id)
-//{
-//if (id == null || id == 0)
-//{
-//return NotFound();
-//}
-//var categoryFromDb = _db.Categories.Find(id);
-
-//if (categoryFromDb == null)
-//{
-//return NotFound();
-//}
-//return View(categoryFromDb);
-//}
-
-
-
-//[HttpPost, ActionName("Delete")]
-//[ValidateAntiForgeryToken]
-//public IActionResult DeletePost(int? id)
-//{
-//var obj = _db.Categories.Find(id);
-//if (obj == null)
-//{
-//return NotFound();
-//}
-//_db.Categories.Remove(obj);
-//_db.SaveChanges();
-//TempData["success"] = "Category deleted succesfully";
-//return RedirectToAction("Index");
-//}
-//}
