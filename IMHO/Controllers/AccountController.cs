@@ -17,7 +17,6 @@ public class AccountController : Controller
         IEnumerable<Account> objAccountyList = _db.Accounts;
         return View(objAccountyList);
     }
-
     //return login page
     [HttpGet("login")]
     //[Route("login")]
@@ -28,9 +27,6 @@ public class AccountController : Controller
 
         return View();
     }
-
-
-
     //GET
     [HttpGet]
     //[ValidateAntiForgeryToken]
@@ -38,9 +34,6 @@ public class AccountController : Controller
     {
         return View();
     }
-
-
-
     [HttpPost("users")]
     //[ValidateAntiForgeryToken]
     public IActionResult Users(Account account)
@@ -60,7 +53,6 @@ public class AccountController : Controller
         }
         return View(account);
     }
-
 
     //GET
     //[HttpGet("sessions")]
@@ -85,10 +77,6 @@ public class AccountController : Controller
         }
     }
 
-
-
-
-
     //This action logs the user in
     [HttpPost("sessions")]
     //[ValidateAntiForgeryToken]
@@ -100,44 +88,54 @@ public class AccountController : Controller
             claims.Add(new Claim("Id", user.Id));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             claims.Add(new Claim(ClaimTypes.Name, "Junhyeok"));
-            //claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-
-            if (returnUrl != null)
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-
-            }
-
-            //return RedirectToAction($"{user.Id}");
+            var items = new Dictionary<string, string?>();
+            items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
+            var properties = new AuthenticationProperties(items);
+            await HttpContext.SignInAsync(claimsPrincipal, properties);
+            return Redirect(returnUrl);
         }
         TempData["Error"] = "Error. User ID or Password is not valid";
         return View("Login");
     }
-
     [HttpGet("denied")]
     public IActionResult Denied()
     {
         return View();
-
     }
 
-
-
+    //[HttpDelete("sessions{token}")]
+    //[Authorize]
+    //public async Task<IActionResult> Logout()
+    //{
+    //var scheme = User.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+    //if (scheme == "google")
+    //{
+    //await HttpContext.SignOutAsync();
+    //return Redirect(@"https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://localhost:7089");
+    //}
+    //else { return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, scheme }); }
+    //}
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync();
-        return Redirect(@"https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://localhost:7089");
-        //return Redirect("/");
+        var scheme = User.Claims.FirstOrDefault(c => c.Type == ".AuthScheme").Value;
+        if (scheme == "google")
+        {
+            await HttpContext.SignOutAsync();
+            return Redirect(@"https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue=https://localhost:7089");
+        }
+        else
+        {
+            var redirectUri = "/";
+            var properties = new AuthenticationProperties();
+            properties.RedirectUri = redirectUri;
+            return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, scheme }, properties);
+            //return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme });
+        }
     }
-
     [HttpGet("login/{provider}")]
     public IActionResult LoginExternal([FromRoute] string provider, [FromQuery] string returnUrl)
     {
@@ -150,8 +148,26 @@ public class AccountController : Controller
         //await HttpContext.ChallengeAsync(provider, authenticationProperties).ConfigureAwait(false);
         return new ChallengeResult(provider, authenticationProperties);
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Validate(string username, string password, string returnUrl)
+    {
+        ViewData["returnUrl"] = returnUrl;
+        if (username == "j" && password == "pizza")
+        {
+            var claims = new List<Claim>();
+            claims.Add(new Claim("username", username));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, username));
+            claims.Add(new Claim(ClaimTypes.Name, username));
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var items = new Dictionary<string, string?>();
+            items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
+            var properties = new AuthenticationProperties(items);
+            await HttpContext.SignInAsync(claimsPrincipal, properties);
+            return Redirect(returnUrl);
+        }
+        TempData["Error"] = "Error. Username or Password is invalid";
+        return View("login");
+    }
 }
-
-
-
-
