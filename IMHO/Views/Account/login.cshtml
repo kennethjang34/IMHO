@@ -11,8 +11,9 @@ var error = TempData["Error"] as string;
 
 }
 <form action="sessions?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)" method="post">
-	<input type="text" name="Id" placeholder="ID" />
+	<input type="text" name="Username" placeholder="Username" />
 	<input type="text" name="Password" placeholder="Password" />
+	<!--<input type="text" name="aaa" placeholder="aaa" />-->
 	<input type="submit" value="login" />
 </form>
 <div>

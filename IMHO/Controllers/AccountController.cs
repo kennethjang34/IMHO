@@ -6,12 +6,49 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-
+using IMHO.Services;
 namespace IMHO.Controllers;
 public class AccountController : Controller
 {
+    //private readonly ILogger<AccountController> _logger;
     private readonly ApplicationDbContext _db;
-    public AccountController(ApplicationDbContext db) { _db = db; }
+    private readonly UserService _userService;
+    private readonly ILogger<AccountController> _logger;
+    //public AccountController(ApplicationDbContext db) { _db = db; }
+    //public AccountController(ILogger<AccountController> logger, UserService userService)
+    //{
+    //_logger = logger;
+    //_userService = userService;
+    //}
+
+    public AccountController(ApplicationDbContext db, UserService userService, ILogger<AccountController> logger)
+    {
+        _db = db;
+        _userService = userService;
+        _logger = logger;
+    }
+    [HttpPost("sessions")]
+    //[Route("validate")]
+    public async Task<IActionResult> Sessions(string username, string password, string returnUrl)
+    {
+        returnUrl ??= "/";
+        ViewData["ReturnUrl"] = returnUrl;
+        if (_userService.TryValidateUser(username, password, out List<Claim> claims))
+        {
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var items = new Dictionary<string, string?>();
+            items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
+            var properties = new AuthenticationProperties(items);
+            await HttpContext.SignInAsync(claimsPrincipal, properties);
+            return Redirect(returnUrl);
+        }
+        else
+        {
+            TempData["Error"] = "Error. Username or Password is invalid";
+            return View("login");
+        }
+    }
     public IActionResult Index()
     {
         IEnumerable<Account> objAccountyList = _db.Accounts;
@@ -38,17 +75,17 @@ public class AccountController : Controller
     //[ValidateAntiForgeryToken]
     public IActionResult Users(Account account)
     {
-        Account? foundWithTheId = _db.Accounts.Where(x => x.Id == account.Id).FirstOrDefault();
+        Account? foundWithTheId = _db.Accounts.Where(x => x.Username == account.Username).FirstOrDefault();
 
         if (foundWithTheId == null)
         {
-            ModelState.AddModelError("Id", "The given ID already exists");
+            ModelState.AddModelError("Username", "The given ID already exists");
         }
         else if (ModelState.IsValid)
         {
             _db.Accounts.Add(account);
             _db.SaveChanges();
-            TempData["success"] = $"Account: {account.Id} successfully created";
+            TempData["success"] = $"Account: {account.Username} successfully created";
 
         }
         return View(account);
@@ -76,30 +113,41 @@ public class AccountController : Controller
             return View();
         }
     }
-
     //This action logs the user in
-    [HttpPost("sessions")]
-    //[ValidateAntiForgeryToken]
-    public async Task<IActionResult> Sessions(Account user, string returnUrl)
-    {
-        if (user.Id == "j" && user.Password == "j")
-        {
-            var claims = new List<Claim>();
-            claims.Add(new Claim("Id", user.Id));
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-            claims.Add(new Claim(ClaimTypes.Name, "Junhyeok"));
-            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var items = new Dictionary<string, string?>();
-            items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
-            var properties = new AuthenticationProperties(items);
-            await HttpContext.SignInAsync(claimsPrincipal, properties);
-            return Redirect(returnUrl);
-        }
-        TempData["Error"] = "Error. User ID or Password is not valid";
-        return View("Login");
-    }
+    //[HttpPost("sessions")]
+    ////[ValidateAntiForgeryToken]
+    //public async Task<IActionResult> Sessions(Account user, string returnUrl)
+    //{
+    //if (user.Id == "j" && user.Password == "j")
+    //{
+    //var claims = new List<Claim>();
+    //claims.Add(new Claim("Id", user.Id));
+    //claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+    //claims.Add(new Claim(ClaimTypes.Name, "Junhyeok"));
+    //claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+    //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+    //var items = new Dictionary<string, string?>();
+    //items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
+    //var properties = new AuthenticationProperties(items);
+    //await HttpContext.SignInAsync(claimsPrincipal, properties);
+    //if (!(returnUrl is null))
+    //{
+    //return Redirect(returnUrl);
+    //}
+    //else
+    //{
+    //return Redirect("/");
+
+
+    //}
+    //}
+    //TempData["Error"] = "Error. User ID or Password is not valid";
+    //return View("Login");
+    //}
+
+
+
     [HttpGet("denied")]
     public IActionResult Denied()
     {
@@ -149,25 +197,25 @@ public class AccountController : Controller
         return new ChallengeResult(provider, authenticationProperties);
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Validate(string username, string password, string returnUrl)
-    {
-        ViewData["returnUrl"] = returnUrl;
-        if (username == "j" && password == "pizza")
-        {
-            var claims = new List<Claim>();
-            claims.Add(new Claim("username", username));
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, username));
-            claims.Add(new Claim(ClaimTypes.Name, username));
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            var items = new Dictionary<string, string?>();
-            items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
-            var properties = new AuthenticationProperties(items);
-            await HttpContext.SignInAsync(claimsPrincipal, properties);
-            return Redirect(returnUrl);
-        }
-        TempData["Error"] = "Error. Username or Password is invalid";
-        return View("login");
-    }
+    //[HttpPost("login")]
+    //public async Task<IActionResult> LoginInternal(string username, string password, string returnUrl)
+    //{
+    //ViewData["returnUrl"] = returnUrl;
+    //if (username == "j" && password == "pizza")
+    //{
+    //var claims = new List<Claim>();
+    //claims.Add(new Claim("username", username));
+    //claims.Add(new Claim(ClaimTypes.NameIdentifier, username));
+    //claims.Add(new Claim(ClaimTypes.Name, username));
+    //var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+    //var items = new Dictionary<string, string?>();
+    //items.Add(".AuthScheme", CookieAuthenticationDefaults.AuthenticationScheme);
+    //var properties = new AuthenticationProperties(items);
+    //await HttpContext.SignInAsync(claimsPrincipal, properties);
+    //return Redirect(returnUrl);
+    //}
+    //TempData["Error"] = "Error. Username or Password is invalid";
+    //return View("login");
+    //}
 }

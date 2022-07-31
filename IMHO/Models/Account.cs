@@ -1,31 +1,21 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-namespace IMHO.Models
+
+namespace IMHO.Models;
+public class Account
 {
-
-    public class Account
+    public int UserId { get; set; }
+    public string? Provider { get; set; }
+    public string? NameIdentifier { get; set; }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
+    public string? Email { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Mobile { get; set; }
+    public string? Roles { get; set; }
+    public List<string> RoleList
     {
-        [Key]
-        public string? Id { get; set; }
-        [Required]
-        public string? Password { get; set; }
-        [Required]
-        public string? FirstName { get; set; }
-        [Required]
-        public byte[]? PasswordSalt { get; set; }
-
-
-        [Required]
-        public string? LastName { get; set; }
-
-        [Required]
-        public string? Country { get; set; }
-        //Example
-        //[DisplayName("Display Order")]
-        //[Range(1, 100, ErrorMessage = "Display Order must be between 1 and 100 only!!")]
-        //public int DisplayOrder { get; set; }
-        public DateTime CreatedDateTime { get; set; } = DateTime.Now;
-
+        get { return Roles?.Split(',').ToList() ?? new List<string>(); }
 
     }
+
 }

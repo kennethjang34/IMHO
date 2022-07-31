@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-
+using IMHO.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 //using Pomelo.EntityFrameworkCore.MySql;
 //args represents command-line arguments
@@ -12,11 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-
-
-
-
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -37,9 +33,25 @@ builder.Services.AddAuthentication(options =>
                 var scheme = context.Properties.Items.Where(k => k.Key == ".AuthScheme").FirstOrDefault();
                 var claim = new Claim(scheme.Key, scheme.Value);
                 var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+                var userService = context.HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+                var nameIdentifier = claimsIdentity.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
+                if (userService != null && nameIdentifier != null)
+                {
+                    var account = userService.GetUserByExternalProvider(scheme.Value, nameIdentifier);
+                    if (account is null)
+                    {
+                        account = userService.AddNewUser(scheme.Value, claimsIdentity.Claims.ToList());
+                    }
+                    foreach (var role in account.RoleList)
+                    {
+                        if (!claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList().Contains(role))
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                        }
+                    }
+                }
                 claimsIdentity.AddClaim(claim);
             },
-
             //OnSigningIn = async context =>
             //{
             //var principal = context.Principal;
@@ -81,18 +93,6 @@ builder.Services.AddAuthentication(options =>
         //options.CallbackPath = "/auth";
         //options.SignedOutCallbackPath = "google-signout";
         options.SaveTokens = true;
-        options.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents()
-        {
-            OnTokenValidated = async context =>
-            {
-                if (context.Principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value == "117945655236360512577")
-                {
-                    var claim = new Claim(ClaimTypes.Role, "Admin");
-                    var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
-                    claimsIdentity.AddClaim(claim);
-                }
-            }
-        };
     }).AddOpenIdConnect("okta", options =>
     {
         options.Authority = builder.Configuration["Okta:Authority"];
@@ -101,6 +101,7 @@ builder.Services.AddAuthentication(options =>
         options.CallbackPath = builder.Configuration["Okta:CallbackPath"];
         options.SignedOutCallbackPath = builder.Configuration["Okta:SignedOutCallbackPath"];
         options.SaveTokens = true;
+
         //options.Authority = "https://dev-52978948.okta.com/oauth2/default";
         //options.ClientId = "0oa5w45jmoXwz0buu5d7";
         //options.ClientSecret = "77Bk6MI8azP7e_zMkhGoWZu9tcDUmyL31XhhRzjP";
@@ -120,11 +121,9 @@ builder.Services.AddAuthentication(options =>
             }
         };
     });
-
 //builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 //builder.Services.AddServerSideBlazor();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -132,7 +131,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -141,6 +139,4 @@ app.UseAuthorization();
 app.MapControllerRoute(
 name: "default",
 pattern: "{controller=Home}/{action=Index}/{id?}");
-
-
 app.Run();
