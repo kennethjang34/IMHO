@@ -38,6 +38,7 @@ builder.Services.AddAuthentication(options =>
                 if (userService != null && nameIdentifier != null)
                 {
                     var account = userService.GetUserByExternalProvider(scheme.Value, nameIdentifier);
+                    //a new user joined
                     if (account is null)
                     {
                         account = userService.AddNewUser(scheme.Value, claimsIdentity.Claims.ToList());
@@ -121,7 +122,7 @@ builder.Services.AddAuthentication(options =>
             }
         };
     });
-//builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 //builder.Services.AddServerSideBlazor();
 var app = builder.Build();
 // Configure the HTTP request pipeline.

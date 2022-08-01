@@ -81,7 +81,6 @@ namespace IMHO.Services
     }
     public static class Extensions
     {
-
         public static string? GetClaimString(this List<Claim> claims, string type)
         {
             var selected = claims.Where(c => c.Type == type).ToList();

@@ -15,7 +15,6 @@ public class Account
     public List<string> RoleList
     {
         get { return Roles?.Split(',').ToList() ?? new List<string>(); }
-
     }
 
 }
