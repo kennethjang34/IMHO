@@ -12,6 +12,7 @@ public class Account
     public string? LastName { get; set; }
     public string? Mobile { get; set; }
     public string? Roles { get; set; }
+    public List<Post>? Posts { get; set; }
     public List<string> RoleList
     {
         get { return Roles?.Split(',').ToList() ?? new List<string>(); }
