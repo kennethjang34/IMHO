@@ -48,7 +48,7 @@ namespace IMHO.Services
                 claims.Add(new Claim(ClaimTypes.Surname, account.LastName));
                 claims.Add(new Claim(ClaimTypes.Email, account.Email));
                 claims.Add(new Claim(ClaimTypes.MobilePhone, account.Mobile));
-                foreach (var r in account.RoleList)
+                foreach (var r in account.Roles)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, r));
                 }
@@ -71,7 +71,7 @@ namespace IMHO.Services
                     Console.WriteLine(claim.Type);
                 }
             }
-            account.Roles = claims.GetClaimString(ClaimTypes.Role);
+            account.RolesString = claims.GetClaimString(ClaimTypes.Role);
             account.Email = claims.GetClaimString(ClaimTypes.Email);
             account.Mobile = claims.GetClaimString(ClaimTypes.MobilePhone);
             var entity = _context.Accounts.Add(account);

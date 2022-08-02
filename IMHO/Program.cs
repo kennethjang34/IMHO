@@ -43,7 +43,7 @@ builder.Services.AddAuthentication(options =>
                     {
                         account = userService.AddNewUser(scheme.Value, claimsIdentity.Claims.ToList());
                     }
-                    foreach (var role in account.RoleList)
+                    foreach (var role in account.Roles)
                     {
                         if (!claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList().Contains(role))
                         {
