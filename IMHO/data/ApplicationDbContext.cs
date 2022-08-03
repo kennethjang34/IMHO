@@ -32,7 +32,7 @@ namespace IMHO.Data
                 e.HasData(new Account
                 {
                     Provider = "Cookies",
-                    UserId = 1,
+                    UserId = -1,
                     Email = "j@test.com",
                     Username = "j",
                     Password = "h",
@@ -50,6 +50,11 @@ namespace IMHO.Data
                 e.Property(e => e.Description);
                 e.HasData(new Channel { ChannelId = -1, Description = "TEST CHANNEL" });
             });
+            modelBuilder.Entity<Tag>(e =>
+            {
+                e.HasData(new Tag { TagId = -1, TagName = "TEST TAG", ChannelId = -1, TagDescription = "TEST TAG DESCRIPTION" });
+            });
+            modelBuilder.Entity<Tag>().HasOne(t => t.Channel).WithMany(c => c.Tags).HasForeignKey(t => t.ChannelId);
             modelBuilder.Entity<Post>(e =>
             {
                 e.HasKey(e => e.PostId);

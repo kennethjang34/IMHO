@@ -84,7 +84,7 @@ namespace IMHO.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
+                            UserId = -1,
                             Email = "j@test.com",
                             FirstName = "Junhyeok",
                             LastName = "Jang",
@@ -144,7 +144,7 @@ namespace IMHO.Migrations
 
             modelBuilder.Entity("IMHO.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -163,7 +163,7 @@ namespace IMHO.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ExposedTo")
+                    b.Property<int?>("ExposedTo")
                         .HasMaxLength(10)
                         .HasColumnType("int");
 
@@ -220,6 +220,15 @@ namespace IMHO.Migrations
                     b.HasIndex("ChannelId");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = -1,
+                            ChannelId = -1,
+                            TagDescription = "TEST TAG DESCRIPTION",
+                            TagName = "TEST TAG"
+                        });
                 });
 
             modelBuilder.Entity("PostTag", b =>
