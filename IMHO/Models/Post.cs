@@ -23,22 +23,22 @@ public class Post
     //F.K
     public int ChannelId { get; set; }
     public Channel? Channel { get; set; }
-    [Display(Name = "Tags")]
-    public string? TagString { get; set; }
+    //[Display(Name = "Tags")]
+    //public string? TagString { get; set; }
     public string? Body { get; set; }
     public string? Image { get; set; }
     public ExposedLevel? ExposedTo { get; set; } = ExposedLevel.Public;
     public bool Published { get; set; } = false;
     public int Views { get; set; } = 0;
-    public List<Comment> Comments { get; set; } = new List<Comment>();
+    public IList<Comment> Comments { get; set; } = new List<Comment>();
     [Timestamp]
     public DateTime? UpdatedAt { get; set; }
     [Timestamp]
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public List<Tag> Tags { get; set; } = new List<Tag>();
-    [NotMapped]
-    public List<string> TagList
-    {
-        get { return TagString?.Split(',').ToList() ?? new List<string>(); }
-    }
+    public IList<Tag> Tags { get; set; } = new List<Tag>();
+    //[NotMapped]
+    //public List<string> TagList
+    //{
+    //get { return TagString?.Split(',').ToList() ?? new List<string>(); }
+    //}
 }

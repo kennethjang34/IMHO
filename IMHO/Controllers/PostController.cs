@@ -41,8 +41,11 @@ namespace IMHO.Controllers
             var scheme = identity.Claims.FirstOrDefault(c => c.Type == ".AuthScheme");
             //Assuming the user logged in through idaas provider
             var author = userService.GetUserByExternalProvider(scheme.Value, nameIdentifier);
-            //var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
-            Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId };
+            Console.WriteLine($"tag id given: { tagId }");
+            Console.WriteLine($"ChannelID Given: {channelId}");
+            var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
+            Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag } };
+
             if (TryValidateModel(post))
             {
                 _db.Posts?.Add(post);

@@ -10,10 +10,9 @@ namespace IMHO.Models
         public int TagId { get; set; }
         public string? TagName { get; set; }
         public string TagDescription { get; set; } = "";
-        //F.K Many
-        public Channel Channel { get; set; }
+        public Channel? Channel { get; set; }
         public int ChannelId { get; set; }
-        public List<Post> Posts { get; set; } = new List<Post>();
+        public IList<Post> Posts { get; set; } = new List<Post>();
 
 
 

@@ -41,7 +41,6 @@ namespace IMHO.Data
                     Mobile = "111-111-111",
                     RolesString = "Admin"
                 });
-
             });
             modelBuilder.Entity<Channel>(e =>
             {
@@ -62,7 +61,7 @@ namespace IMHO.Data
                 e.Property(e => e.AuthorId);
                 e.Property(e => e.Title).HasMaxLength(150);
                 //e.Property(e => e.Author);
-                e.Property(e => e.TagString);
+                //e.Property(e => e.TagString);
                 e.Property(e => e.Views).HasMaxLength(100);
                 e.Property(e => e.Body).HasMaxLength(500);
                 e.Property(e => e.ExposedTo).HasMaxLength(10);
@@ -70,6 +69,10 @@ namespace IMHO.Data
                 e.Property(e => e.CreatedAt);
                 e.Property(e => e.UpdatedAt);
             });
+            modelBuilder
+        .Entity<Post>()
+        .HasMany(p => p.Tags)
+        .WithMany(t => t.Posts);
             modelBuilder.Entity<Post>().HasOne(p => p.Author).WithMany(a => a.Posts).HasForeignKey(p => p.AuthorId);
             modelBuilder.Entity<Post>().HasOne(p => p.Channel).WithMany(c => c.Posts).HasForeignKey(p => p.ChannelId);
             //!! ef core foreign key with alternate key ex:
