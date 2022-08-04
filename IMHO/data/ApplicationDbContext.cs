@@ -70,11 +70,14 @@ namespace IMHO.Data
                 e.Property(e => e.UpdatedAt);
             });
             modelBuilder
-        .Entity<Post>()
-        .HasMany(p => p.Tags)
+	        .Entity<Post>()
+             .HasMany(p => p.Tags)
         .WithMany(t => t.Posts);
+            modelBuilder.Entity<Account>().HasMany(a => a.Channels).WithMany(c => c.Members);
             modelBuilder.Entity<Post>().HasOne(p => p.Author).WithMany(a => a.Posts).HasForeignKey(p => p.AuthorId);
             modelBuilder.Entity<Post>().HasOne(p => p.Channel).WithMany(c => c.Posts).HasForeignKey(p => p.ChannelId);
+            modelBuilder.Entity<Comment>().HasOne(c => c.Post).WithMany(p => p.Comments).HasForeignKey(c => c.CommentId);
+            modelBuilder.Entity<Comment>().HasOne(c => c.Author).WithMany(a => a.Comments).HasForeignKey(c => c.AuthorId);
             //!! ef core foreign key with alternate key ex:
             //ModelBuilder.Entity<Post>().HasOne(p=>p.Channel).WithMany(c=>c.Posts).HasForeignKey(p=>p.ChannelURl).HasPrincipalKey(c=>c.ChannelURl);
             //Enum value conversion is automatically configured by EF Core. The following code is for an example of value conversion.
