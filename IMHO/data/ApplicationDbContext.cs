@@ -57,7 +57,7 @@ namespace IMHO.Data
                 e.Property(e => e.AuthorId);
                 e.Property(e => e.Title).HasMaxLength(150);
                 //e.Property(e => e.Author);
-                e.Property(e => e.TagString);
+                //e.Property(e => e.TagString);
                 e.Property(e => e.Views).HasMaxLength(100);
                 e.Property(e => e.Body).HasMaxLength(500);
                 e.Property(e => e.ExposedTo).HasMaxLength(10);
