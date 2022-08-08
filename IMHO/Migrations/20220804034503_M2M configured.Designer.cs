@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220802045118_M2M relations configured")]
-    partial class M2Mrelationsconfigured
+    [Migration("20220804034503_M2M configured")]
+    partial class M2Mconfigured
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,7 +86,7 @@ namespace IMHO.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
+                            UserId = -1,
                             Email = "j@test.com",
                             FirstName = "Junhyeok",
                             LastName = "Jang",
@@ -123,10 +123,6 @@ namespace IMHO.Migrations
             modelBuilder.Entity("IMHO.Models.Comment", b =>
                 {
                     b.Property<int>("CommentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int?>("AccountUserId")
                         .HasColumnType("int");
 
                     b.Property<int>("AuthorId")
@@ -137,16 +133,14 @@ namespace IMHO.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("AccountUserId");
-
-                    b.HasIndex("PostId");
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("IMHO.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -165,7 +159,7 @@ namespace IMHO.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ExposedTo")
+                    b.Property<int?>("ExposedTo")
                         .HasMaxLength(10)
                         .HasColumnType("int");
 
@@ -175,9 +169,6 @@ namespace IMHO.Migrations
                     b.Property<bool>("Published")
                         .HasMaxLength(10)
                         .HasColumnType("tinyint(10)");
-
-                    b.Property<string>("TagString")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Title")
                         .HasMaxLength(150)
@@ -222,6 +213,15 @@ namespace IMHO.Migrations
                     b.HasIndex("ChannelId");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = -1,
+                            ChannelId = -1,
+                            TagDescription = "TEST TAG DESCRIPTION",
+                            TagName = "TEST TAG"
+                        });
                 });
 
             modelBuilder.Entity("PostTag", b =>
@@ -256,15 +256,21 @@ namespace IMHO.Migrations
 
             modelBuilder.Entity("IMHO.Models.Comment", b =>
                 {
-                    b.HasOne("IMHO.Models.Account", null)
+                    b.HasOne("IMHO.Models.Account", "Author")
                         .WithMany("Comments")
-                        .HasForeignKey("AccountUserId");
-
-                    b.HasOne("IMHO.Models.Post", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("IMHO.Models.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("IMHO.Models.Post", b =>

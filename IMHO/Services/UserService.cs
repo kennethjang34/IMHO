@@ -10,8 +10,6 @@ namespace IMHO.Services
         {
             _context = context;
         }
-
-
         internal Account? GetUserByExternalProvider(string provider, string nameIdentifier)
         {
             var account = _context.Accounts.Where(a => a.Provider == provider).Where(a => a.NameIdentifier == nameIdentifier).FirstOrDefault();
@@ -21,8 +19,6 @@ namespace IMHO.Services
             //}
             return account;
         }
-
-
         internal Account? GetUserById(int id)
         {
             var account = _context.Accounts.Find(id);

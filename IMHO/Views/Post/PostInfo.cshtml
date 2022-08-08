@@ -1,0 +1,10 @@
+@using IMHO.Models
+@model Post
+<div class="text-center">
+	<h1 class="display-4">
+		PostId: @Model.PostId
+		PostTitle: @Model.Title
+		PostChannelId: @Model.ChannelId
+		PostTag(first only): @Model.Tags[0]
+	</h1>
+	</div>

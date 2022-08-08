@@ -14,9 +14,7 @@ namespace IMHO.Models
         public int PostId { get; set; }
         [Required]
         public int AuthorId { get; set; }
-        [NotMapped]
         public Post Post { get; set; }
-        [NotMapped]
         public Account Author { get; set; }
 
 

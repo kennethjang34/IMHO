@@ -3,6 +3,7 @@ using System;
 using IMHO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220803144548_Post model data validation requirements changed1")]
+    partial class Postmodeldatavalidationrequirementschanged1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,6 +123,10 @@ namespace IMHO.Migrations
             modelBuilder.Entity("IMHO.Models.Comment", b =>
                 {
                     b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AccountUserId")
                         .HasColumnType("int");
 
                     b.Property<int>("AuthorId")
@@ -131,7 +137,9 @@ namespace IMHO.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("AccountUserId");
+
+                    b.HasIndex("PostId");
 
                     b.ToTable("Comments");
                 });
@@ -167,6 +175,9 @@ namespace IMHO.Migrations
                     b.Property<bool>("Published")
                         .HasMaxLength(10)
                         .HasColumnType("tinyint(10)");
+
+                    b.Property<string>("TagString")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Title")
                         .HasMaxLength(150)
@@ -254,21 +265,15 @@ namespace IMHO.Migrations
 
             modelBuilder.Entity("IMHO.Models.Comment", b =>
                 {
-                    b.HasOne("IMHO.Models.Account", "Author")
+                    b.HasOne("IMHO.Models.Account", null)
                         .WithMany("Comments")
-                        .HasForeignKey("AuthorId")
+                        .HasForeignKey("AccountUserId");
+
+                    b.HasOne("IMHO.Models.Post", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("IMHO.Models.Post", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("IMHO.Models.Post", b =>

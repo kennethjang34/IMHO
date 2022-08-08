@@ -4,7 +4,7 @@
 
 namespace IMHO.Migrations
 {
-    public partial class test : Migration
+    public partial class Postmodeldatavalidationrequirementschanged1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

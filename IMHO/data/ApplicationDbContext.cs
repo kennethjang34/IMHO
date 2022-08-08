@@ -32,7 +32,7 @@ namespace IMHO.Data
                 e.HasData(new Account
                 {
                     Provider = "Cookies",
-                    UserId = 1,
+                    UserId = -1,
                     Email = "j@test.com",
                     Username = "j",
                     Password = "h",
@@ -41,7 +41,6 @@ namespace IMHO.Data
                     Mobile = "111-111-111",
                     RolesString = "Admin"
                 });
-
             });
             modelBuilder.Entity<Channel>(e =>
             {
@@ -50,6 +49,11 @@ namespace IMHO.Data
                 e.Property(e => e.Description);
                 e.HasData(new Channel { ChannelId = -1, Description = "TEST CHANNEL" });
             });
+            modelBuilder.Entity<Tag>(e =>
+            {
+                e.HasData(new Tag { TagId = -1, TagName = "TEST TAG", ChannelId = -1, TagDescription = "TEST TAG DESCRIPTION" });
+            });
+            modelBuilder.Entity<Tag>().HasOne(t => t.Channel).WithMany(c => c.Tags).HasForeignKey(t => t.ChannelId);
             modelBuilder.Entity<Post>(e =>
             {
                 e.HasKey(e => e.PostId);
@@ -65,8 +69,15 @@ namespace IMHO.Data
                 e.Property(e => e.CreatedAt);
                 e.Property(e => e.UpdatedAt);
             });
+            modelBuilder
+	        .Entity<Post>()
+             .HasMany(p => p.Tags)
+        .WithMany(t => t.Posts);
+            modelBuilder.Entity<Account>().HasMany(a => a.Channels).WithMany(c => c.Members);
             modelBuilder.Entity<Post>().HasOne(p => p.Author).WithMany(a => a.Posts).HasForeignKey(p => p.AuthorId);
             modelBuilder.Entity<Post>().HasOne(p => p.Channel).WithMany(c => c.Posts).HasForeignKey(p => p.ChannelId);
+            modelBuilder.Entity<Comment>().HasOne(c => c.Post).WithMany(p => p.Comments).HasForeignKey(c => c.CommentId);
+            modelBuilder.Entity<Comment>().HasOne(c => c.Author).WithMany(a => a.Comments).HasForeignKey(c => c.AuthorId);
             //!! ef core foreign key with alternate key ex:
             //ModelBuilder.Entity<Post>().HasOne(p=>p.Channel).WithMany(c=>c.Posts).HasForeignKey(p=>p.ChannelURl).HasPrincipalKey(c=>c.ChannelURl);
             //Enum value conversion is automatically configured by EF Core. The following code is for an example of value conversion.

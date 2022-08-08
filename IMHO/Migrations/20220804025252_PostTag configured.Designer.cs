@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220802033309_Basic components migration")]
-    partial class Basiccomponentsmigration
+    [Migration("20220804025252_PostTag configured")]
+    partial class PostTagconfigured
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,14 +72,12 @@ namespace IMHO.Migrations
 
                     b.Property<string>("RolesString")
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("Roles");
 
                     b.Property<string>("Username")
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
-
-                    b.Property<int>("test")
-                        .HasColumnType("int");
 
                     b.HasKey("UserId");
 
@@ -88,7 +86,7 @@ namespace IMHO.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = 1,
+                            UserId = -1,
                             Email = "j@test.com",
                             FirstName = "Junhyeok",
                             LastName = "Jang",
@@ -96,8 +94,7 @@ namespace IMHO.Migrations
                             Password = "h",
                             Provider = "Cookies",
                             RolesString = "Admin",
-                            Username = "j",
-                            test = -23
+                            Username = "j"
                         });
                 });
 
@@ -113,7 +110,7 @@ namespace IMHO.Migrations
 
                     b.HasKey("ChannelId");
 
-                    b.ToTable("Channel");
+                    b.ToTable("Channels");
 
                     b.HasData(
                         new
@@ -129,6 +126,9 @@ namespace IMHO.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("AccountUserId")
+                        .HasColumnType("int");
+
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
@@ -137,16 +137,16 @@ namespace IMHO.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("AccountUserId");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("IMHO.Models.Post", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
@@ -157,10 +157,7 @@ namespace IMHO.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("Channel")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("ChannelId")
+                    b.Property<int>("ChannelId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -178,9 +175,6 @@ namespace IMHO.Migrations
                     b.Property<bool>("Published")
                         .HasMaxLength(10)
                         .HasColumnType("tinyint(10)");
-
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
 
                     b.Property<string>("TagString")
                         .HasColumnType("longtext");
@@ -203,8 +197,6 @@ namespace IMHO.Migrations
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("ChannelId");
-
-                    b.HasIndex("TagId");
 
                     b.ToTable("Posts");
                 });
@@ -229,7 +221,31 @@ namespace IMHO.Migrations
 
                     b.HasIndex("ChannelId");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = -1,
+                            ChannelId = -1,
+                            TagDescription = "TEST TAG DESCRIPTION",
+                            TagName = "TEST TAG"
+                        });
+                });
+
+            modelBuilder.Entity("PostTag", b =>
+                {
+                    b.Property<int>("PostsPostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsTagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostsPostId", "TagsTagId");
+
+                    b.HasIndex("TagsTagId");
+
+                    b.ToTable("PostTag");
                 });
 
             modelBuilder.Entity("AccountChannel", b =>
@@ -249,21 +265,15 @@ namespace IMHO.Migrations
 
             modelBuilder.Entity("IMHO.Models.Comment", b =>
                 {
-                    b.HasOne("IMHO.Models.Account", "Author")
+                    b.HasOne("IMHO.Models.Account", null)
                         .WithMany("Comments")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AccountUserId");
 
-                    b.HasOne("IMHO.Models.Post", "Post")
+                    b.HasOne("IMHO.Models.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("IMHO.Models.Post", b =>
@@ -274,15 +284,15 @@ namespace IMHO.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IMHO.Models.Channel", null)
+                    b.HasOne("IMHO.Models.Channel", "Channel")
                         .WithMany("Posts")
-                        .HasForeignKey("ChannelId");
-
-                    b.HasOne("IMHO.Models.Tag", null)
-                        .WithMany("Posts")
-                        .HasForeignKey("TagId");
+                        .HasForeignKey("ChannelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("Channel");
                 });
 
             modelBuilder.Entity("IMHO.Models.Tag", b =>
@@ -294,6 +304,21 @@ namespace IMHO.Migrations
                         .IsRequired();
 
                     b.Navigation("Channel");
+                });
+
+            modelBuilder.Entity("PostTag", b =>
+                {
+                    b.HasOne("IMHO.Models.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("IMHO.Models.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("IMHO.Models.Account", b =>
@@ -313,11 +338,6 @@ namespace IMHO.Migrations
             modelBuilder.Entity("IMHO.Models.Post", b =>
                 {
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("IMHO.Models.Tag", b =>
-                {
-                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

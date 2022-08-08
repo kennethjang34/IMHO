@@ -1,0 +1,7 @@
+@{
+//ViewData["Title"] = "User Session";
+}
+<div class="text-center">
+	<h1 class="display-4">Welcome @User.Claims.FirstOrDefault(c=>c.Type=="Username")</h1>
+	<h2>YAYY</h2>
+</div>
