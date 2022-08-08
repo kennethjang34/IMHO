@@ -1,9 +1,17 @@
 <div class="postInputBox">
-	<form>
+	<form (ngSubmit)="onSubmit()">
 		<div class="postInputBox__input">
 			<img src="https://i.pinimg.com/originals/a6/58/32/a65832155622ac173337874f02b218fb.png" alt="" />
-			<input type="text" placeholder="What's happening?" />
+			<div class="form-control"><label for="title">Title</label>
+				<input type="text" name="Title" id="title" [(ngModel)]="title" placeholder="enter title" />
+				<label for="body">Body</label>
+				<input type="text" name="Body" id="body" [(ngModel)]="body" placeholder="enter body" />
+				<label for="tagId">tagId</label>
+				<input type="text" name="TagId" id="tagId" placeholder="enter tag ID" />
+				<label for="channelId">channelId</label>
+				<input type="text" name="ChannelId" id="channelId" placeholder="enter channel ID" />
+			</div>
+			<button class="postInputBox__postButton">Post</button>
 		</div>
-		<button class="postInputBox__postButton">Post</button>
 	</form>
 </div>
