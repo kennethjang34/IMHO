@@ -45,7 +45,6 @@ namespace IMHO.Controllers
             Console.WriteLine($"ChannelID Given: {channelId}");
             var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
             Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag } };
-
             if (TryValidateModel(post))
             {
                 _db.Posts?.Add(post);
