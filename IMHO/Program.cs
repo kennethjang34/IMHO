@@ -123,6 +123,7 @@ builder.Services.AddAuthentication(options =>
         };
     });
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+builder.Services.AddCors(o => o.AddPolicy("TestPolicy", builder => { builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader(); }));
 //builder.Services.AddServerSideBlazor();
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -132,6 +133,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.UseCors("TestPolicy");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

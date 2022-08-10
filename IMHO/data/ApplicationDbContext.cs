@@ -60,8 +60,6 @@ namespace IMHO.Data
                 e.Property(e => e.PostId);
                 e.Property(e => e.AuthorId);
                 e.Property(e => e.Title).HasMaxLength(150);
-                //e.Property(e => e.Author);
-                //e.Property(e => e.TagString);
                 e.Property(e => e.Views).HasMaxLength(100);
                 e.Property(e => e.Body).HasMaxLength(500);
                 e.Property(e => e.ExposedTo).HasMaxLength(10);
@@ -70,7 +68,7 @@ namespace IMHO.Data
                 e.Property(e => e.UpdatedAt);
             });
             modelBuilder
-	        .Entity<Post>()
+            .Entity<Post>()
              .HasMany(p => p.Tags)
         .WithMany(t => t.Posts);
             modelBuilder.Entity<Account>().HasMany(a => a.Channels).WithMany(c => c.Members);

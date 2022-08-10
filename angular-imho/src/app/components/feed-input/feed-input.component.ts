@@ -7,7 +7,7 @@ import {Post} from 'src/app/post';
 	styleUrls: ['./feed-input.component.css']
 })
 export class FeedInputComponent implements OnInit {
-	@Output() onNewPost: EventEmitter<Post> = new EventEmitter();
+	@Output() onMakePost: EventEmitter<Post> = new EventEmitter();
 	title?: string;
 	body?: string;
 	channelId?: string;
@@ -18,12 +18,12 @@ export class FeedInputComponent implements OnInit {
 			return;
 		}
 		const newPost = {
-			title: this.title,
-			body: this.body,
-			channelId: this.channelId,
-			tagId: this.tagId
+			Title: this.title,
+			Body: this.body,
+			ChannelId: this.channelId
+			, TagId: this.tagId
 		};
-		this.onNewPost.emit(newPost);
+		this.onMakePost.emit(newPost);
 		this.title = '';
 		this.body = '';
 		this.tagId = '';
