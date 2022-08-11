@@ -123,7 +123,11 @@ builder.Services.AddAuthentication(options =>
         };
     });
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
-builder.Services.AddCors(o => o.AddPolicy("TestPolicy", builder => { builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader(); }));
+builder.Services.AddCors(o => o.AddPolicy("TestPolicy", builder =>
+{
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+}));
+//builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader(); }));
 //builder.Services.AddServerSideBlazor();
 var app = builder.Build();
 // Configure the HTTP request pipeline.

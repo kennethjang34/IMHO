@@ -13,7 +13,12 @@ import {FeedInputComponent} from './components/feed-input/feed-input.component';
 import {FeedPostComponent} from './components/feed-post/feed-post.component';
 import {WidgetComponent} from './components/widget/widget.component';
 import {FormsModule} from '@angular/forms';
-
+import {LoginCallbackComponent} from './components/login-callback/login-callback.component';
+import {LogoutCallbackComponent} from './components/logout-callback/logout-callback.component';
+import {SilentCallbackComponent} from './components/silent-callback/silent-callback.component';
+import {HomeComponent} from './components/home/home.component';
+import {OAuthModule, OAuthService} from 'angular-oauth2-oidc';
+import {Router, RouterModule, Routes} from '@angular/router';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -21,13 +26,17 @@ import {FormsModule} from '@angular/forms';
 		FeedHomeComponent,
 		FeedInputComponent,
 		FeedPostComponent,
-		WidgetComponent
+		WidgetComponent,
+		LoginCallbackComponent,
+		LogoutCallbackComponent,
+		SilentCallbackComponent,
+		HomeComponent
 	],
 	imports: [
 		BrowserModule,
 		AppRoutingModule, FontAwesomeModule, FormsModule, HttpClientModule
 	],
-	providers: [],
+	providers: [OAuthService],
 	bootstrap: [AppComponent]
 })
 export class AppModule {
