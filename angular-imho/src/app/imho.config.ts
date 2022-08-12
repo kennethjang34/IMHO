@@ -20,6 +20,7 @@ export const authCodeFlowConfig: AuthConfig = {
 	//                       // set the scope for the permissions the client should request
 	//                         // The first three are defined by OIDC. The 4th is a usecase-specific one
 	scope: 'openid profile email',
+	//https://www.googleapis.com/auth/calendar',
 	responseType: 'code',
 	//
 	showDebugInformation: true,

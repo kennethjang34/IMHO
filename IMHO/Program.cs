@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using IMHO.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 //using Pomelo.EntityFrameworkCore.MySql;
 //args represents command-line arguments
 var builder = WebApplication.CreateBuilder(args);
@@ -16,9 +17,10 @@ builder.Services.AddScoped<UserService>();
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    //options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     //options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 
 }).AddCookie(
     options =>
@@ -119,6 +121,37 @@ builder.Services.AddAuthentication(options =>
             {
                 var redirectUri = context.ProtocolMessage.RedirectUri;
                 await Task.CompletedTask;
+            }
+        };
+    }).AddJwtBearer((options) =>
+    {
+        options.Authority = "https://dev-52978948.okta.com/oauth2/default";
+        options.Events = new JwtBearerEvents()
+        {
+            OnTokenValidated = async context =>
+            {
+                var scheme = context.Properties.Items.Where(k => k.Key == ".AuthScheme").FirstOrDefault();
+                var claim = new Claim(scheme.Key, scheme.Value);
+                var claimsIdentity = context.Principal.Identity as ClaimsIdentity;
+                var userService = context.HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+                var nameIdentifier = claimsIdentity.Claims.FirstOrDefault(m => m.Type == ClaimTypes.NameIdentifier)?.Value;
+                if (userService != null && nameIdentifier != null)
+                {
+                    var account = userService.GetUserByExternalProvider(scheme.Value, nameIdentifier);
+                    //a new user joined
+                    if (account is null)
+                    {
+                        account = userService.AddNewUser(scheme.Value, claimsIdentity.Claims.ToList());
+                    }
+                    foreach (var role in account.Roles)
+                    {
+                        if (!claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToList().Contains(role))
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                        }
+                    }
+                }
+                claimsIdentity.AddClaim(claim);
             }
         };
     });

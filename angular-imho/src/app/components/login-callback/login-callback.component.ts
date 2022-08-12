@@ -21,64 +21,17 @@ export class LoginCallbackComponent implements OnInit {
 		this.authService.oidc = true;
 		this.authService.setStorage(sessionStorage);
 		this.authService.tokenValidationHandler = new JwksValidationHandler();
+		//following codes are needed to capture search query made of auth code before angular router navigates to ['home']. (After this.router.navigate(['hom']), the search query will be lost).
+		//Then block can also be used instead.
+		//ex: this.authService.loadDiscoveryDocument().then(()=>{this.authService.tryLoginFlow}).then(()=>{this.router.navigate(['home'])})
+		var options: any = {customHashFragment: window.location.search};
 		this.authService.loadDiscoveryDocument().then(() => {
-			this.authService.tryLoginCodeFlow({
-				//onTokenReceived: context => {
-				//console.log("logged in");
-				//console.log(context);
-				//console.log(this.access_token);
-				//this.router.navigate(['home']);
-				//}
-			})
-		}).then(
-			() => {this.router.navigate(['home'])}
-		);
+			this.authService.tryLoginCodeFlow(options);
+		});
+		this.router.navigate(['home']);
 	}
-
 }
 
 
 
 
-//import {Component, OnInit} from '@angular/core';
-//import {Router} from '@angular/router';
-//import {OAuthService} from 'angular-oauth2-oidc';
-//import {authCodeFlowConfig} from 'src/app/imho.config';
-//import {JwksValidationHandler} from 'angular-oauth2-oidc';
-//import {filter} from 'rxjs';
-//@Component({
-	//selector: 'app-login-callback',
-	//templateUrl: './login-callback.component.html',
-	//styleUrls: ['./login-callback.component.css']
-//})
-//export class LoginCallbackComponent implements OnInit {
-	//private access_token?: any;
-	//constructor(private router: Router, private oauthService: OAuthService) {
-		//// Remember the selected configuration
-		//this.configureCodeFlow();
-		//// Automatically load user profile
-		//this.oauthService.events
-			//.pipe(filter((e) => e.type === 'token_received'))
-			//.subscribe((_) => {
-				//console.debug('state', this.oauthService.state);
-				//this.oauthService.loadUserProfile();
-				//const scopes = this.oauthService.getGrantedScopes();
-				//console.debug('scopes', scopes);
-			//});
-	//}
-	//ngOnInit(): void {
-		//this.router.navigate(['home']);
-	//}
-	//private configureCodeFlow() {
-		//this.oauthService.configure(authCodeFlowConfig);
-		//this.oauthService.oidc = true;
-		//this.oauthService.setStorage(sessionStorage);
-		//this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-		//this.oauthService.loadDiscoveryDocument().then(() => this.oauthService.tryLoginCodeFlow());
-		////this.oauthService.tryLoginCodeFlow();
-		////this.oauthService.loadDiscoveryDocumentAndTryLogin();
-		////this.oauthService.loadDiscoveryDocumentAndLogin();
-		////this.oauthService.setupAutomaticSilentRefresh();
-	//}
-
-//}
