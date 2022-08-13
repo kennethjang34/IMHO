@@ -1,42 +1,48 @@
-<div class="sidebar">
-	<fa-icon [icon]="['fas','gavel']" [style]="{}" class="topLogo" size="3x">
-	</fa-icon>
-	<div class="sidebarOption active">
-		<span class="material-icons"> home </span>
-		<h2>Home</h2>
-	</div>
-	<div class="sidebarOption">
-		<span class="material-icons"> search </span>
-		<h2>Explore</h2>
-	</div>
-	<div class="sidebarOption">
-		<span class="material-icons"> notifications_none </span>
-		<h2>Notifications</h2>
-	</div>
+<div class="home">
+	<div class="sidebar">
+		<fa-icon [icon]="['fas','gavel']" [style]="{}" class="topLogo" size="3x">
+		</fa-icon>
+		<div class="sidebarOption active">
+			<span class="material-icons"> home </span>
+			<h2>Home</h2>
+		</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> search </span>
+			<h2>Explore</h2>
+		</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> notifications_none </span>
+			<h2>Notifications</h2>
+		</div>
 
-	<div class="sidebarOption">
-		<span class="material-icons"> mail_outline </span>
-		<h2>Messages</h2>
-	</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> mail_outline </span>
+			<h2>Messages</h2>
+		</div>
 
-	<div class="sidebarOption">
-		<span class="material-icons"> bookmark_border </span>
-		<h2>Bookmarks</h2>
-	</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> bookmark_border </span>
+			<h2>Bookmarks</h2>
+		</div>
 
-	<div class="sidebarOption">
-		<span class="material-icons"> list_alt </span>
-		<h2>Lists</h2>
-	</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> list_alt </span>
+			<h2>Lists</h2>
+		</div>
 
-	<div class="sidebarOption">
-		<span class="material-icons"> perm_identity </span>
-		<h2>Profile</h2>
-	</div>
+		<div class="sidebarOption">
+			<span class="material-icons"> perm_identity </span>
+			<h2>Profile</h2>
+		</div>
 
-	<div class="sidebarOption">
-		<span class="material-icons"> more_horiz </span>
-		<h2>More</h2>
+		<div class="sidebarOption">
+			<span class="material-icons"> more_horiz </span>
+			<h2>More</h2>
+		</div>
+		<a class="sidebarOption" (click)="onLogoutClicked()">
+			<span class="material-icons">logout</span>
+			<h2>Logout</h2>
+		</a>
+		<button class="sidebar__tweet">New Post</button>
 	</div>
-	<button class="sidebar__tweet">New Post</button>
 </div>

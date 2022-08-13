@@ -7,11 +7,11 @@ import {BehaviorSubject, filter} from 'rxjs';
 
 @Component({
 	templateUrl: './home.component.html',
+	styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
 	private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
 	public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
-
 	private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
 	public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 	loginFailed: boolean = false;
@@ -40,11 +40,11 @@ export class HomeComponent implements OnInit {
 		await this.oauthService.loadDiscoveryDocument();
 		sessionStorage.setItem('flow', 'code');
 		this.oauthService.initCodeFlow();
-		this.oauthService.tryLoginCodeFlow();
 	}
 	logout() {
 		// this.oauthService.logOut();
 		this.oauthService.revokeTokenAndLogout();
+
 	}
 	loadUserProfile(): void {
 		this.oauthService.loadUserProfile().then((up) => (this.userProfile = up));

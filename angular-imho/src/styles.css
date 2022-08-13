@@ -1,21 +1,21 @@
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  --hover-background: #e6ecf0;
-  --icon-color:#A9A9A9;
-}
-body {
-  --hover-background: #e6ecf0;
-    --icon-color:#A9A9A9;
-}
-body {
-  display: flex;
-  height: 100vh;
-  max-width: 1300px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 10px;
-}
+/** {*/
+  /*margin: 0;*/
+  /*padding: 0;*/
+  /*box-sizing: border-box;*/
+  /*--hover-background: #e6ecf0;*/
+  /*--icon-color:#A9A9A9;*/
+/*}*/
+/*.home {*/
+  /*--hover-background: #e6ecf0;*/
+    /*--icon-color:#A9A9A9;*/
+/*}*/
+/*.home {*/
+  /*display: flex;*/
+  /*height: 100vh;*/
+  /*max-width: 1300px;*/
+  /*margin-left: auto;*/
+  /*margin-right: auto;*/
+  /*padding: 0 10px;*/
+/*}*/
 

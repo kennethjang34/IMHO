@@ -19,5 +19,9 @@
       <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.7" />
+      <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Google.Apis.Auth" />
   </ItemGroup>
 </Project>

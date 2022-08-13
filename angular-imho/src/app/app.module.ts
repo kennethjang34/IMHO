@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http'
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {FontAwesomeModule, FaIconLibrary} from '@fortawesome/angular-fontawesome';
@@ -19,6 +19,7 @@ import {SilentCallbackComponent} from './components/silent-callback/silent-callb
 import {HomeComponent} from './components/home/home.component';
 import {OAuthModule, OAuthService} from 'angular-oauth2-oidc';
 import {Router, RouterModule, Routes} from '@angular/router';
+import {JwtInterceptor} from './services/auth.service'; 
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -35,8 +36,8 @@ import {Router, RouterModule, Routes} from '@angular/router';
 	imports: [
 		BrowserModule,
 		AppRoutingModule, FontAwesomeModule, FormsModule, HttpClientModule
-	],
-	providers: [OAuthService],
+	], 
+	providers: [OAuthService,  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }],
 	bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -32,11 +32,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-
 	imports: [RouterModule.forRoot(routes,), OAuthModule.forRoot({
 		resourceServer: {
 			allowedUrls: ['https://localhost:7089'],
-			sendAccessToken: true
+			sendAccessToken: false,
 		}
 	})],
 	exports: [RouterModule]
