@@ -46,7 +46,7 @@ namespace IMHO.Services
             new Claim(JwtRegisteredClaimNames.Email, payload.Email),
         new Claim(JwtRegisteredClaimNames.Sub, payload.Subject),
             new Claim(JwtRegisteredClaimNames.Iss, payload.Issuer)
-	    };
+        };
             try
             {
                 var principal = new ClaimsPrincipal();
