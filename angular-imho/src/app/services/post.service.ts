@@ -36,6 +36,8 @@ export class PostService {
 		formData.append("Body", post.body);
 		formData.append("ChannelId", post.channelId);
 		formData.append("TagId", post.tagId);
+		formData.append("Image", post.image);
+
 		//for (let [key, value] of Object.entries(post)) {
 		//formData.append(key, value as any);
 		//}

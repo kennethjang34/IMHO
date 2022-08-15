@@ -270,3 +270,4 @@ _Pvt_Extensions
 # System files
 **/.DS_Store
 **/Thumbs.db
+**/resources/*
