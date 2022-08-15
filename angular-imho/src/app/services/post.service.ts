@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {map, Observable, of} from 'rxjs';
 import {Post} from '../post';
 //const httpOptions = {
 //headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -13,8 +13,9 @@ export class PostService {
 	private apiUrl = 'https://localhost:7089/posts';
 	private testApiUrl = 'https://localhost:7089/post/newpost';
 	private httpOptions: {headers?: HttpHeaders};
+	posts: Post[] = [];
 	constructor(private http: HttpClient) {
-		this.headers = new HttpHeaders({'Content-Type': 'application/json'});
+		this.headers = new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json'});
 		this.httpOptions = {headers: this.headers};
 	}
 	getPosts(): Observable<Post[]> {
@@ -32,4 +33,5 @@ export class PostService {
 		//return this.http.post<Post>(this.apiUrl, post, httpOptions);
 		return this.http.post<Post>(this.testApiUrl, JSON.stringify(post), this.httpOptions);
 	}
+
 }

@@ -3,6 +3,9 @@
 		<h2>Home</h2>
 	</div>
 	<app-feed-input (onMakePost)="makePost($any($event))"></app-feed-input>
-	<app-feed-post></app-feed-post>
+
+	<app-feed-post *ngFor="let post of posts?.reverse()" [post]="post">
+	</app-feed-post>
+	<!--<app-feed-post></app-feed-post>-->
 	<!--<app-feed-post *ngFor="let post of posts" [post]="post" (onDeletePost)="deletePost(post)"></app-feed-post>-->
 </div>

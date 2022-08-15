@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from 'src/app/post';
 import {PostService} from 'src/app/services/post.service';
-
 @Component({
 	selector: 'app-feed-home',
 	templateUrl: './feed-home.component.html',
@@ -16,20 +15,20 @@ export class FeedHomeComponent implements OnInit {
 	getPosts() {
 		this.postService.getPosts().subscribe((posts) => {
 			this.posts = posts;
-
-
 		})
-
-
-
 	}
 	deletePost(post: Post) {
 		this.postService.deletePost(post).subscribe(() => {this.posts = this.posts.filter(p => p.id !== post.id)});
 	}
 	makePost(post: Post) {
 		this.postService.makePost(post).subscribe((post) => {
+			//change this implementation
 			this.posts.push(post);
-			console.log(post);
+			this.postService.posts.push(post);
+			//JSON response well received on the frontend side.
+			this.posts.forEach(post => {
+				console.log(post);
+			});
 		});
 	}
 	updatePost(post: Post, key: string, newValue: string) {

@@ -35,14 +35,17 @@ export class HomeComponent implements OnInit {
 		});
 	}
 	async loginCode() {
-		// Tweak config for code flow
-		this.oauthService.configure(authCodeFlowConfig);
-		await this.oauthService.loadDiscoveryDocument();
-		sessionStorage.setItem('flow', 'code');
-		this.oauthService.initCodeFlow();
+		if (this.hasValidIdToken) {
+			console.log("Already has valid id token");
+			return;
+		} else {
+			this.oauthService.configure(authCodeFlowConfig);
+			await this.oauthService.loadDiscoveryDocument();
+			sessionStorage.setItem('flow', 'code');
+			this.oauthService.initCodeFlow();
+		}
 	}
 	logout() {
-		// this.oauthService.logOut();
 		this.oauthService.revokeTokenAndLogout();
 
 	}
