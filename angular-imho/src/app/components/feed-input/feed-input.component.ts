@@ -1,6 +1,9 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {Post} from 'src/app/post';
+class ImageSnippet {
+	constructor(public src: string, public file: File) {}
+}
 @Component({
 	selector: 'app-feed-input',
 	templateUrl: './feed-input.component.html',
@@ -12,6 +15,7 @@ export class FeedInputComponent implements OnInit {
 	body?: string;
 	channelId?: string;
 	tagId?: string;
+	selectedFile?: ImageSnippet
 	onSubmit() {
 		if (!this.body) {
 			alert('body cannot be empty!');
@@ -20,15 +24,24 @@ export class FeedInputComponent implements OnInit {
 		const newPost = {
 			Title: this.title,
 			Body: this.body,
-			ChannelId: this.channelId
-			, TagId: this.tagId
+			ChannelId: this.channelId, TagId: this.tagId, Image: this.selectedFile?.file
 		};
 		this.onMakePost.emit(newPost);
 		this.title = '';
 		this.body = '';
 		this.tagId = '';
 		this.channelId = '';
+		this.selectedFile = null;
 	}
+	processImage(imageInput: any) {
+		const file = imageInput.files[0];
+		const reader = new FileReader();
+		reader.addEventListener('load', (event: any) => {
+			this.selectedFile = new ImageSnippet(event.target.result, file);
+		});
+		reader.readAsDataURL(file);
+	}
+
 	constructor() {}
 	ngOnInit(): void {
 

@@ -6,13 +6,19 @@
 				<input type="text" name="Title" id="title" [(ngModel)]="title" placeholder="enter title" />
 				<label for="body">Body</label>
 				<input type="text" name="Body" id="body" [(ngModel)]="body" placeholder="enter body" />
-				<label for="tagId">tagId</label>
+				<label for="tagId">TagId</label>
 				<input type="text" name="TagId" id="tagId" [(ngModel)]="tagId" placeholder="enter tag ID" />
-				<label for="channelId">channelId</label>
+				<label for="channelId">ChannelId</label>
 				<input type="text" name="ChannelId" id="channelId" [(ngModel)]="channelId"
 					placeholder="enter channel ID" />
+				<label class="btn btn-bwm">
+					<span>Select Image</span>
+					<input #imageInput type="file" accept="image/*" (change)="processImage(imageInput)">
+				</label>
+				<div>
+					<img [src]="selectedFile?.src" />
+				</div>
 			</div>
-			<!--{{channelId}}-->
 			<button class="postInputBox__postButton">Post</button>
 		</div>
 	</form>
