@@ -10,7 +10,7 @@ class ImageSnippet {
 	styleUrls: ['./feed-input.component.css']
 })
 export class FeedInputComponent implements OnInit {
-	@Output() onMakePost: EventEmitter<Post> = new EventEmitter();
+	@Output() onMakePost: EventEmitter<Post | FormData> = new EventEmitter();
 	title?: string;
 	body?: string;
 	channelId?: string;
@@ -22,11 +22,12 @@ export class FeedInputComponent implements OnInit {
 			return;
 		}
 		const newPost = {
-			Title: this.title,
-			Body: this.body,
-			ChannelId: this.channelId, TagId: this.tagId, Image: this.selectedFile?.file
+			title: this.title,
+			body: this.body,
+			channelId: this.channelId, tagId: this.tagId, image: this.selectedFile?.file
 		};
 		this.onMakePost.emit(newPost);
+		//this.onMakePost.emit(formData);
 		this.title = '';
 		this.body = '';
 		this.tagId = '';

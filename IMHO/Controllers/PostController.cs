@@ -9,6 +9,7 @@ using IMHO.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace IMHO.Controllers
 {
     public class PostController
@@ -42,26 +43,18 @@ namespace IMHO.Controllers
         //Console.WriteLine(jsonDict.ToString());
         //Console.WriteLine(jsonDict["Title"]);
         //return RedirectToAction("Index");
-
-
-
-
         //}
         //Currentlty only support google id token (JWT format)
+
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]
-        public async Task<IActionResult> NewPost([FromBody] IDictionary<string, string> jsonDict)
+        public async Task<IActionResult> NewPost(IFormCollection collection, IFormFile? image)
         {
-
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
             {
                 var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
-
-                foreach (Claim c in identity1.Claims)
-                {
-                    Console.WriteLine($"Key: {c.Type}, Value: {c.Value}");
-                }
             }
             else
             {
@@ -69,16 +62,19 @@ namespace IMHO.Controllers
             }
             var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
             var identity = User.Identity as ClaimsIdentity;
-            Console.WriteLine($"Identity given name: {identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)}");
             var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var author = userService.GetUserByExternalProvider("google", nameIdentifier);
-            string title = jsonDict["Title"];
-            int tagId = Int32.Parse(jsonDict["TagId"]);
-            int channelId = Int32.Parse(jsonDict["ChannelId"]);
-            string body = jsonDict["Body"];
-            Console.WriteLine(author.UserId);
+            //foreach (var c in collection)
+            //{
+            //Console.WriteLine(c.ToString());
+            //}
+            string title = collection["Title"];
+            int tagId = Int32.Parse(collection["TagId"]);
+            int channelId = Int32.Parse(collection["ChannelId"]);
+            string body = collection["Body"];
             var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
             Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag } };
+            Console.WriteLine(image);
             if (TryValidateModel(post))
             {
                 _db.Posts?.Add(post);
@@ -90,10 +86,69 @@ namespace IMHO.Controllers
             }
             else
             {
+                var errors = ModelState.Select(x => x.Value.Errors)
+                              .Where(y => y.Count > 0)
+                              .ToList();
+                Console.WriteLine(errors[0]);
+                foreach (var e in errors[0])
+                {
+                    Console.WriteLine(e.ErrorMessage);
+                }
                 TempData["error"] = "Error occurred while creating the post";
+                Console.WriteLine("Not Successful");
                 return View("~/Views/Home/NewPost.cshtml");
             }
         }
+
+
+
+
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[HttpPost]
+        ////[Authorize]
+        //public async Task<IActionResult> NewPost([FromBody] IDictionary<string, string> dict)
+        //{
+
+        //if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
+        //{
+        //var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
+
+        //foreach (Claim c in identity1.Claims)
+        //{
+        //Console.WriteLine($"Key: {c.Type}, Value: {c.Value}");
+        //}
+        //}
+        //else
+        //{
+        //Console.WriteLine("no user");
+        //}
+        //var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+        //var identity = User.Identity as ClaimsIdentity;
+        //Console.WriteLine($"Identity given name: {identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)}");
+        //var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        //var author = userService.GetUserByExternalProvider("google", nameIdentifier);
+        //string title = dict["Title"];
+        //int tagId = Int32.Parse(dict["TagId"]);
+        //int channelId = Int32.Parse(dict["ChannelId"]);
+        //string body = dict["Body"];
+        //Console.WriteLine(author.UserId);
+        //var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
+        //Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag } };
+        //if (TryValidateModel(post))
+        //{
+        //_db.Posts?.Add(post);
+        //_db.SaveChanges();
+        //TempData["success"] = "The new post successfully created";
+        //Console.WriteLine("Successful");
+        //return Json(post);
+        ////return RedirectToAction("Index");
+        //}
+        //else
+        //{
+        //TempData["error"] = "Error occurred while creating the post";
+        //return View("~/Views/Home/NewPost.cshtml");
+        //}
+        //}
         //[HttpPost]
         //public async Task<IActionResult> NewPost([FromBody] IDictionary<string, string> jsonDict)
         //{
@@ -123,6 +178,7 @@ namespace IMHO.Controllers
         //TempData["error"] = "Error occurred while creating the post";
         //return View("~/Views/Home/NewPost.cshtml");
         ////return View("PostInfo", post);
+
         ////return BadRequest();
         //}
         //}

@@ -15,7 +15,8 @@ export class PostService {
 	private httpOptions: {headers?: HttpHeaders};
 	posts: Post[] = [];
 	constructor(private http: HttpClient) {
-		this.headers = new HttpHeaders({'Content-Type': 'application/json', 'Accept': 'application/json'});
+		//this.headers = new HttpHeaders({'Content-Type': 'multipart/form-data', 'Accept': 'multipart/form-data'});
+		this.headers = new HttpHeaders({});
 		this.httpOptions = {headers: this.headers};
 	}
 	getPosts(): Observable<Post[]> {
@@ -30,8 +31,20 @@ export class PostService {
 		return this.http.put<Post>(url, post, this.httpOptions);
 	}
 	makePost(post: Post): Observable<Post> {
-		//return this.http.post<Post>(this.apiUrl, post, httpOptions);
-		return this.http.post<Post>(this.testApiUrl, JSON.stringify(post), this.httpOptions);
+		var formData = new FormData();
+		formData.append("Title", post.title);
+		formData.append("Body", post.body);
+		formData.append("ChannelId", post.channelId);
+		formData.append("TagId", post.tagId);
+		//for (let [key, value] of Object.entries(post)) {
+		//formData.append(key, value as any);
+		//}
+		return this.http.post<Post>(this.testApiUrl, formData, this.httpOptions);
+		//return this.http.post<Post>(this.testApiUrl, JSON.stringify(post), this.httpOptions);
+	}
+	makePostForm(formData: FormData): Observable<FormData> {
+		return this.http.post<FormData>(this.testApiUrl, formData, this.httpOptions);
+
 	}
 
 }

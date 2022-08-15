@@ -66,6 +66,7 @@ namespace IMHO.Data
                 e.Property(e => e.Published).HasMaxLength(10);
                 e.Property(e => e.CreatedAt);
                 e.Property(e => e.UpdatedAt);
+                e.Property(e => e.Image);
             });
             modelBuilder
             .Entity<Post>()
