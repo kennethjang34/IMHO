@@ -24,7 +24,7 @@ public class Image
     {
         return FileName;
     }
-    public string GetFullFileName()
+    public string? GetFullFileName()
     {
         return FileName + Format;
     }
