@@ -24,28 +24,39 @@ namespace IMHO.Controllers
         {
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("Images/{imageId}")]
         //[Authorize]
         public async Task<IActionResult> GetImage(int imageId)
         {
-            if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
-            {
-                var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
-            }
-            else
-            {
-                Console.WriteLine("no user");
-            }
-            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            var identity = User.Identity as ClaimsIdentity;
-            var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var author = userService.GetUserByExternalProvider("google", nameIdentifier);
+
+            //if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
+            //{
+            //var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
+            //}
+            //else
+            //{
+            //Console.WriteLine("no user");
+            //}
+
+            //var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            //var identity = User.Identity as ClaimsIdentity;
+            //var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            //var author = userService.GetUserByExternalProvider("google", nameIdentifier);
             //string? storagePath = null;
+            Console.WriteLine("Image controller");
             var image = _db.Images.FirstOrDefault(img => img.ImageId == imageId);
-            var dir = Directory.GetCurrentDirectory();
-            var path = Path.Combine(dir, image.FileName);
-            return base.File(path, "image/jpeg");
+            var folderName = Path.Combine("Resources", "Images");
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+            var fullFileName = image.GetFullFileName();
+            var fullPath = Path.Combine(folderPath, fullFileName);
+            //var fullPath = Path.Combine(folderPath, "seol.jpeg");
+            //var path = Path.Combine(dir, image.FileName);
+            bool result = System.IO.File.Exists(fullPath);
+            var img = System.IO.File.OpenRead(fullPath);
+
+            //return File(fullPath, $"image/{image.Format}");
+            return File(img, $"image/{image.Format}");
         }
 
 

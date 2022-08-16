@@ -18,4 +18,15 @@ public class Image
     public string? FileName { get; set; }
     [Timestamp]
     public DateTime UploadedAt { get; set; } = DateTime.Now;
+
+
+    public string? GetFileName()
+    {
+        return FileName;
+    }
+    public string GetFullFileName()
+    {
+        return FileName + Format;
+    }
+
 }

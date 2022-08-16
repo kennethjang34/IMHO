@@ -99,7 +99,6 @@ namespace IMHO.Controllers
                         Post = post,
                         Caption = caption
                     };
-                    storagePath = Path.Combine(folderName, fullImageName);
                     var fullPath = Path.Combine(pathToSave, fullFileName);
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
