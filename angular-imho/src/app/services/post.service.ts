@@ -36,11 +36,13 @@ export class PostService {
 		formData.append("Body", post.body);
 		formData.append("ChannelId", post.channelId);
 		formData.append("TagId", post.tagId);
-		formData.append("Image", post.image);
-
-		//for (let [key, value] of Object.entries(post)) {
-		//formData.append(key, value as any);
-		//}
+		//formData.append("Images", post.image);
+		post.images?.forEach(image => {
+			formData.append("Images", image);
+		})
+		post.imageCaptions?.forEach(caption => {
+			formData.append("ImageCaptions", caption);
+		});
 		return this.http.post<Post>(this.testApiUrl, formData, this.httpOptions);
 		//return this.http.post<Post>(this.testApiUrl, JSON.stringify(post), this.httpOptions);
 	}

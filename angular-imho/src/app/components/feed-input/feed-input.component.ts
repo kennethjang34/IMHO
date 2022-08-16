@@ -2,7 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {Post} from 'src/app/post';
 class ImageSnippet {
-	constructor(public src: string, public file: File) {}
+	constructor(public src: string, public file: File, public caption: string) {}
 }
 @Component({
 	selector: 'app-feed-input',
@@ -24,7 +24,7 @@ export class FeedInputComponent implements OnInit {
 		const newPost = {
 			title: this.title,
 			body: this.body,
-			channelId: this.channelId, tagId: this.tagId, image: this.selectedFile?.file
+			channelId: this.channelId, tagId: this.tagId, images: [this.selectedFile?.file], imageCaptions: [this.selectedFile?.caption]
 		};
 		this.onMakePost.emit(newPost);
 		//this.onMakePost.emit(formData);
@@ -38,7 +38,7 @@ export class FeedInputComponent implements OnInit {
 		const file = imageInput.files[0];
 		const reader = new FileReader();
 		reader.addEventListener('load', (event: any) => {
-			this.selectedFile = new ImageSnippet(event.target.result, file);
+			this.selectedFile = new ImageSnippet(event.target.result, file, "NO CAPTION (FOR TEST)");
 		});
 		reader.readAsDataURL(file);
 	}

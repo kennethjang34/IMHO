@@ -51,7 +51,7 @@ namespace IMHO.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]
-        public async Task<IActionResult> NewPost(IFormCollection collection, IFormFile? image)
+        public async Task<IActionResult> NewPost(IFormCollection collection, IList<IFormFile> images)
         {
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
             {
@@ -70,27 +70,40 @@ namespace IMHO.Controllers
             //Console.WriteLine(c.ToString());
             //}
             //var file = Request.Form.Files[0];
-            if (image != null && image.Length > 0)
-            {
-                var folderName = Path.Combine("Resources", "Images");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                var fileName = ContentDispositionHeaderValue.Parse(image.ContentDisposition).FileName.Trim('"');
-                Console.WriteLine($"The file disposition header is : {ContentDispositionHeaderValue.Parse(image.ContentDisposition)}");
-                var fullPath = Path.Combine(pathToSave, fileName);
-                var storagePath = Path.Combine(folderName, fileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    image.CopyTo(stream);
-                }
-                return Ok(new { storagePath });
-            }
+            string? storagePath = null;
             string title = collection["Title"];
             int tagId = Int32.Parse(collection["TagId"]);
             int channelId = Int32.Parse(collection["ChannelId"]);
             string body = collection["Body"];
             var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
             Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag } };
-            Console.WriteLine(image);
+            Console.WriteLine($"Image count: {images.Count()}");
+            if (images.Count() > 0)
+            {
+                for (int i = 0; i < images.Count(); i++)
+                {
+                    IFormFile imageFile = images[i];
+                    var folderName = Path.Combine("Resources", "Images");
+                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                    //Image name != File name. File name must be unique, needs to be determined before saving to db
+                    var imageName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
+                    var fileName = string.Format(@"{0}{1}", Guid.NewGuid(), Path.GetExtension(imageName));
+                    var caption = collection["ImageCaptions"][i];
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    Image image = new Image { ImageName = imageName, Uri = fullPath, Post = post, Caption = caption };
+                    storagePath = Path.Combine(folderName, imageName);
+                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        imageFile.CopyTo(stream);
+                    }
+                    post.Images.Add(image);
+
+                }
+                //foreach (IFormFile imageFile in images)
+                //{
+                //}
+            }
+            //Console.WriteLine(image);
             if (TryValidateModel(post))
             {
                 _db.Posts?.Add(post);
@@ -98,7 +111,6 @@ namespace IMHO.Controllers
                 TempData["success"] = "The new post successfully created";
                 Console.WriteLine("Successful");
                 return Json(post);
-                //return new MultipartResult()
             }
             else
             {

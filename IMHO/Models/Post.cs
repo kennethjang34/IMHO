@@ -26,7 +26,8 @@ public class Post
     //[Display(Name = "Tags")]
     //public string? TagString { get; set; }
     public string? Body { get; set; }
-    public string? Image { get; set; }
+    //public string? Image { get; set; }
+    public IList<Image> Images { get; set; } = new List<Image>();
     public ExposedLevel? ExposedTo { get; set; } = ExposedLevel.Public;
     public bool Published { get; set; } = false;
     public int Views { get; set; } = 0;

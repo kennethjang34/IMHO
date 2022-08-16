@@ -3,6 +3,7 @@ using System;
 using IMHO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220816023748_Seed data for image5")]
+    partial class Seeddataforimage5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,9 +145,6 @@ namespace IMHO.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Caption")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ImageName")
                         .HasColumnType("longtext");
 
                     b.Property<int?>("PostId")
