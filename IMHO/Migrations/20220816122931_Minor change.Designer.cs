@@ -3,6 +3,7 @@ using System;
 using IMHO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220816122931_Minor change")]
+    partial class Minorchange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,13 +147,6 @@ namespace IMHO.Migrations
                     b.Property<string>("Caption")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FileName")
-                        .HasMaxLength(150)
-                        .HasColumnType("varchar(150)");
-
-                    b.Property<string>("Format")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("ImageName")
                         .HasColumnType("longtext");
 
@@ -162,6 +157,10 @@ namespace IMHO.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Uri")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
 
                     b.HasKey("ImageId");
 
@@ -174,10 +173,9 @@ namespace IMHO.Migrations
                         {
                             ImageId = 2,
                             Caption = "test image",
-                            FileName = "/Users/JANG/IMHO/IMHO/Resources/Images/seol.jpeg",
-                            Format = "jpeg",
                             PostId = 2,
-                            UploadedAt = new DateTime(2022, 8, 16, 21, 58, 28, 761, DateTimeKind.Local).AddTicks(9000)
+                            UploadedAt = new DateTime(2022, 8, 16, 21, 29, 31, 474, DateTimeKind.Local).AddTicks(8080),
+                            Uri = "/Users/JANG/IMHO/IMHO/Resources/Images/seol.jpeg"
                         });
                 });
 

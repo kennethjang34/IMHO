@@ -13,6 +13,7 @@ namespace IMHO.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,7 +67,6 @@ namespace IMHO.Data
                 e.Property(e => e.Published).HasMaxLength(10);
                 e.Property(e => e.CreatedAt);
                 e.Property(e => e.UpdatedAt);
-                //e.Property(e => e.Image);
             });
             modelBuilder.Entity<Image>(e =>
             {
@@ -74,8 +74,9 @@ namespace IMHO.Data
                 e.Property(e => e.ImageName);
                 e.Property(e => e.PostId);
                 e.Property(e => e.Caption);
-                e.Property(e => e.Uri).HasMaxLength(150);
-                e.HasData(new Image { PostId = 2, ImageId = 2, Uri = "/Users/JANG/IMHO/IMHO/Resources/Images/seol.jpeg", Caption = "test image" });
+                e.Property(e => e.FileName).HasMaxLength(150);
+                e.Property(e => e.Format);
+                e.HasData(new Image { PostId = 2, ImageId = 2, Format = "jpeg", FileName = "/Users/JANG/IMHO/IMHO/Resources/Images/seol.jpeg", Caption = "test image" });
             });
             modelBuilder.Entity<Image>().HasOne(i => i.Post).WithMany(p => p.Images).HasForeignKey(i => i.PostId);
             modelBuilder

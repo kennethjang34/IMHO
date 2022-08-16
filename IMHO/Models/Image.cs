@@ -13,5 +13,9 @@ public class Image
     public string? ImageName { get; set; }
     public Post? Post { get; set; }
     public string? Caption { get; set; }
-    public string? Uri { get; set; }
+    //public string? Uri { get; set; }
+    public string? Format { get; set; }
+    public string? FileName { get; set; }
+    [Timestamp]
+    public DateTime UploadedAt { get; set; } = DateTime.Now;
 }

@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using IMHO.Data;
 using IMHO.Models;
@@ -15,45 +16,18 @@ using System.Net;
 using System.Net.Mime;
 namespace IMHO.Controllers
 {
-    public class PostController
-    : IMHOController<PostController>
+    public class ImageController
+    : IMHOController<ImageController>
     {
-        public PostController(ApplicationDbContext db, UserService userService, ILogger<PostController> logger)
+        public ImageController(ApplicationDbContext db, UserService userService, ILogger<ImageController> logger)
         : base(db, userService, logger)
         {
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> NewPost(Post post)
-        //{
-        //if (ModelState.IsValid)
-        //{
-        //_db.Posts.Add(post);
-        //_db.SaveChanges();
-        //TempData["success"] = "The new post successfully created";
-        //return RedirectToAction("Index");
-        //}
-        //else
-        //{
-        //return View("PostInfo", post);
-        ////return BadRequest();
-        //}
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> NewPost([FromBody] IDictionary<string, string> jsonDict)
-        //{
-        ////string jsonString = Request.GetBody();
-        //Console.WriteLine(jsonDict.ToString());
-        //Console.WriteLine(jsonDict["Title"]);
-        //return RedirectToAction("Index");
-        //}
-        //Currentlty only support google id token (JWT format)
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost]
+        [HttpGet("Images/{imageId}")]
         //[Authorize]
-        public async Task<IActionResult> NewPost(IFormCollection collection, IList<IFormFile> images)
+        public async Task<IActionResult> GetImage(int imageId)
         {
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
             {
@@ -67,70 +41,11 @@ namespace IMHO.Controllers
             var identity = User.Identity as ClaimsIdentity;
             var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var author = userService.GetUserByExternalProvider("google", nameIdentifier);
-            //foreach (var c in collection)
-            //{
-            //Console.WriteLine(c.ToString());
-            //}
-            //var file = Request.Form.Files[0];
-            string? storagePath = null;
-            string title = collection["Title"];
-            int tagId = Int32.Parse(collection["TagId"]);
-            int channelId = Int32.Parse(collection["ChannelId"]);
-            string body = collection["Body"];
-            var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
-            Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag }, Images = new List<Image>() };
-            Console.WriteLine($"Image count: {images.Count()}");
-            if (images.Count() > 0)
-            {
-                for (int i = 0; i < images.Count(); i++)
-                {
-                    IFormFile imageFile = images[i];
-                    var folderName = Path.Combine("Resources", "Images");
-                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                    //Image name != File name. File name must be unique, needs to be determined before saving to db
-                    var fullImageName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                    var fullFileName = string.Format(@"{0}{1}", Guid.NewGuid(), Path.GetExtension(fullImageName));
-                    var caption = collection["ImageCaptions"][i];
-                    Image image = new Image
-                    {
-                        ImageName = Path.GetFileNameWithoutExtension(fullImageName),
-                        FileName = Path.GetFileNameWithoutExtension(fullFileName),
-                        Format = Path.GetExtension(fullImageName),
-                        Post = post,
-                        Caption = caption
-                    };
-                    storagePath = Path.Combine(folderName, fullImageName);
-                    var fullPath = Path.Combine(pathToSave, fullFileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        imageFile.CopyTo(stream);
-                    }
-                    post.Images.Add(image);
-                }
-            }
-            //Console.WriteLine(image);
-            if (TryValidateModel(post))
-            {
-                _db.Posts?.Add(post);
-                _db.SaveChanges();
-                TempData["success"] = "The new post successfully created";
-                Console.WriteLine("Successful");
-                //return Ok(Json(post));
-                return Json(post);
-            }
-            else
-            {
-                var errors = ModelState.Select(x => x.Value.Errors)
-                              .Where(y => y.Count > 0)
-                              .ToList();
-                foreach (var e in errors[0])
-                {
-                    Console.WriteLine(e.ErrorMessage);
-                }
-                TempData["error"] = "Error occurred while creating the post";
-                Console.WriteLine("Not Successful");
-                return View("~/Views/Home/NewPost.cshtml");
-            }
+            //string? storagePath = null;
+            var image = _db.Images.FirstOrDefault(img => img.ImageId == imageId);
+            var dir = Directory.GetCurrentDirectory();
+            var path = Path.Combine(dir, image.FileName);
+            return base.File(path, "image/jpeg");
         }
 
 
