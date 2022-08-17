@@ -1,5 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {Image, Post} from '../../post';
+import {DomSanitizer} from '@angular/platform-browser';
+
 @Component({
 	selector: 'app-feed-post',
 	templateUrl: './feed-post.component.html',

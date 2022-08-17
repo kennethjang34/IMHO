@@ -1,3 +1,5 @@
+import {SafeUrl} from "@angular/platform-browser";
+
 export class Image {
 	//caption?: string;
 	//source?: string;
@@ -5,8 +7,10 @@ export class Image {
 	imageId?: string;
 	postId?: number | string;
 	imageName?: string;
-	constructor(public source?: string | number, public file?: Blob, public caption?: string) {
-
+	imageUrl?: SafeUrl;
+	constructor(public source?: string | number, public file?: Blob, public caption?: string, public url?: SafeUrl) {
+		//this.imageUrl = URL.createObjectURL(file);
+		this.imageUrl = url;
 	}
 }
 export interface Post {

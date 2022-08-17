@@ -2,6 +2,8 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable, Injector} from '@angular/core';
 import {Image} from '../post';
 import {map, Observable, of, merge, tap} from 'rxjs';
+import {DomSanitizer} from '@angular/platform-browser';
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -9,7 +11,7 @@ export class ImageService {
 	private apiUrl: string;
 	private httpHeaders: HttpHeaders;
 	private httpOptions: any;
-	constructor(private injector: Injector, private http: HttpClient) {
+	constructor(private injector: Injector, private http: HttpClient, private sanitizer: DomSanitizer) {
 		this.apiUrl = this.injector.get('API_ADDRESS') + "images/";
 		this.httpHeaders = new HttpHeaders();
 		this.httpHeaders.append('observe', 'response');
@@ -33,7 +35,9 @@ export class ImageService {
 		const httpObservable = this.http.get<Blob>(this.apiUrl + `${imageId}`, this.httpOptions);
 		httpObservable.subscribe((v) => {console.log(v)});
 		return httpObservable.pipe(map((imageFile: any) => {
-			return new Image(imageId, imageFile, "No caption yet")
+			const url = URL.createObjectURL(imageFile);
+			const safeUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+			return new Image(imageId, imageFile, "No caption yet", safeUrl)
 		}));
 	}
 }
