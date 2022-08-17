@@ -22,7 +22,7 @@ export class PostService {
 	}
 	getPosts(): Observable<Post[]> {
 		return this.http.get<Post[]>(this.apiUrl).pipe(map((posts: Array<Post>): Array<Post> => {
-			posts.forEach(post => {
+			posts?.forEach(post => {
 				this.imageService.getImageFiles(post.images);
 			});
 			return posts;
