@@ -1,9 +1,10 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
-import {Post} from 'src/app/post';
-class ImageSnippet {
-	constructor(public src: string, public file: File, public caption: string) {}
-}
+import {Post, Image} from 'src/app/post';
+
+//class ImageSnippet {
+//constructor(public src: string, public file: File, public caption: string) {}
+//}
 @Component({
 	selector: 'app-feed-input',
 	templateUrl: './feed-input.component.html',
@@ -15,7 +16,9 @@ export class FeedInputComponent implements OnInit {
 	body?: string;
 	channelId?: string;
 	tagId?: string;
-	selectedFile?: ImageSnippet
+	selectedFile?: Image;
+	@ViewChild('imageInput', {static: false})
+	imageInput: any
 	onSubmit() {
 		if (!this.body) {
 			alert('body cannot be empty!');
@@ -24,21 +27,23 @@ export class FeedInputComponent implements OnInit {
 		const newPost = {
 			title: this.title,
 			body: this.body,
-			channelId: this.channelId, tagId: this.tagId, images: [this.selectedFile?.file], imageCaptions: [this.selectedFile?.caption]
+			channelId: this.channelId, tagId: this.tagId, images: this.selectedFile ? [this.selectedFile] : []
 		};
 		this.onMakePost.emit(newPost);
-		//this.onMakePost.emit(formData);
 		this.title = '';
 		this.body = '';
 		this.tagId = '';
 		this.channelId = '';
 		this.selectedFile = null;
+
+		this.imageInput.nativeElement.value = null;
+
 	}
-	processImage(imageInput: any) {
+	processImage(event: any, imageInput: any) {
 		const file = imageInput.files[0];
 		const reader = new FileReader();
 		reader.addEventListener('load', (event: any) => {
-			this.selectedFile = new ImageSnippet(event.target.result, file, "NO CAPTION (FOR TEST)");
+			this.selectedFile = new Image(event.target.result, file, "NO CAPTION (FOR TEST)");
 		});
 		reader.readAsDataURL(file);
 	}

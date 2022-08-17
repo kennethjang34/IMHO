@@ -26,10 +26,8 @@ namespace IMHO.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("Images/{imageId}")]
-        //[Authorize]
         public async Task<IActionResult> GetImage(int imageId)
         {
-
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
             {
                 var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
@@ -38,7 +36,6 @@ namespace IMHO.Controllers
             {
                 Console.WriteLine("no user");
             }
-
             var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
             var identity = User.Identity as ClaimsIdentity;
             var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -50,18 +47,13 @@ namespace IMHO.Controllers
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
             var fullFileName = image.GetFullFileName();
             var fullPath = Path.Combine(folderPath, fullFileName);
-            //var fullPath = Path.Combine(folderPath, "seol.jpeg");
-            //var path = Path.Combine(dir, image.FileName);
             bool result = System.IO.File.Exists(fullPath);
             var img = System.IO.File.OpenRead(fullPath);
-
-            //return File(fullPath, $"image/{image.Format}");
             return File(img, $"image/{image.Format}");
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("Images")]
-        //[Authorize]
         public async Task<IActionResult> GetImages([FromQuery(Name = "post-id")] int postId)
         {
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
@@ -72,7 +64,6 @@ namespace IMHO.Controllers
             {
                 Console.WriteLine("no user");
             }
-
             var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
             var identity = User.Identity as ClaimsIdentity;
             var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;

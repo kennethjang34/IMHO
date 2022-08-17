@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Post} from 'src/app/post';
+import {ImageService} from 'src/app/services/image.service';
 import {PostService} from 'src/app/services/post.service';
+import {Image} from 'src/app/post';
 @Component({
 	selector: 'app-feed-home',
 	templateUrl: './feed-home.component.html',
@@ -8,7 +10,7 @@ import {PostService} from 'src/app/services/post.service';
 })
 export class FeedHomeComponent implements OnInit {
 	posts: Post[] = [];
-	constructor(private postService: PostService) {}
+	constructor(private postService: PostService, private imageService: ImageService) {}
 	ngOnInit(): void {
 		this.getPosts();
 	}
@@ -21,11 +23,17 @@ export class FeedHomeComponent implements OnInit {
 		this.postService.deletePost(post).subscribe(() => {this.posts = this.posts.filter(p => p.id !== post.id)});
 	}
 	makePost(post: Post) {
-		this.postService.makePost(post).subscribe((post) => {
+		this.postService.makePost(post).subscribe((res) => {
 			//change this implementation
-			this.posts.push(post);
-			this.postService.posts.push(post);
-			//JSON response well received on the frontend side.
+			const newPost: Post = {body: res.body, title: res.title, id: res.id, channelId: res.channelId, tagId: res.tagId, images: res.images};
+			const downloadedImages: Array<Image> = [];
+			this.imageService.getImageFiles([...res.images]).subscribe((img) => {
+				newPost.images.push(img);
+				downloadedImages.push(img);
+			});
+			console.log(`downloadedImages: ${downloadedImages}`);
+			this.posts.push(newPost);
+			this.postService.posts.push(newPost);
 			this.posts.forEach(post => {
 				console.log(post);
 			});

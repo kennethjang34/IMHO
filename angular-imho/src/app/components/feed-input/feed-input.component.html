@@ -12,11 +12,11 @@
 				<input type="text" name="ChannelId" id="channelId" [(ngModel)]="channelId"
 					placeholder="enter channel ID" />
 				<label class="btn btn-bwm">
-					<span>Select Image</span>
-					<input #imageInput type="file" accept="image/*" (change)="processImage(imageInput)">
+					<input #imageInput type="file" accept="image/*" id="images" alt="../assets/seol-photo.jpg"
+						(change)="processImage($event,imageInput)">
 				</label>
 				<div>
-					<img [src]="selectedFile?.src" />
+					<img [src]="selectedFile ? selectedFile.source : ''" />
 				</div>
 			</div>
 			<button class="postInputBox__postButton">Post</button>
