@@ -25,18 +25,20 @@ export class FeedHomeComponent implements OnInit {
 	makePost(post: Post) {
 		this.postService.makePost(post).subscribe((res) => {
 			//change this implementation
-			const newPost: Post = {body: res.body, title: res.title, id: res.id, channelId: res.channelId, tagId: res.tagId, images: res.images};
-			const downloadedImages: Array<Image> = [];
-			this.imageService.getImageFiles([...res.images]).subscribe((img) => {
+			const newPost: Post = {body: res.body, title: res.title, id: res.id, channelId: res.channelId, tagId: res.tagId, images: []};
+			//console.log(res.images);
+			this.imageService.getImageFiles([...(res.images)]).subscribe((img) => {
+				console.log("hmm");
 				newPost.images.push(img);
-				downloadedImages.push(img);
+				console.log("Inside makePost");
+				console.log(img);
+				//downloadedImages.push(img);
 			});
-			console.log(`downloadedImages: ${downloadedImages}`);
 			this.posts.push(newPost);
 			this.postService.posts.push(newPost);
-			this.posts.forEach(post => {
-				console.log(post);
-			});
+			//this.posts.forEach(post => {
+			//console.log(post);
+			//});
 		});
 	}
 	updatePost(post: Post, key: string, newValue: string) {

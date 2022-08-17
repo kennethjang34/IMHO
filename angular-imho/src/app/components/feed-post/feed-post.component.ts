@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {Post} from '../../post';
+import {Image, Post} from '../../post';
 @Component({
 	selector: 'app-feed-post',
 	templateUrl: './feed-post.component.html',
@@ -9,12 +9,22 @@ export class FeedPostComponent implements OnInit {
 
 	@Input() post?: Post
 	@Output() onDeletePost: EventEmitter<Post> = new EventEmitter();
+	@Input() imageUrl?: string
 	//@Output() onUpdatePost: EventEmitter<Post> = new EventEmitter();
 	constructor() {}
 	onDelete(post?: Post) {
 		this.onDeletePost.emit(post);
 	}
 	ngOnInit(): void {
+	}
+
+	getImageUrl(image: Image) {
+		console.log("Inside getImageUrl");
+		const file: Blob = image.file;
+		//const url = window.URL.createObjectURL(file);
+		//console.log(url);
+		//return url;
+		return file;
 	}
 
 }

@@ -5,7 +5,7 @@ export class Image {
 	imageId?: string;
 	postId?: number | string;
 	imageName?: string;
-	constructor(public source?: string | number, public file?: File, public caption?: string) {
+	constructor(public source?: string | number, public file?: Blob, public caption?: string) {
 
 	}
 }

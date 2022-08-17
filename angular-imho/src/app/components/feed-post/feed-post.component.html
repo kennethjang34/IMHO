@@ -14,8 +14,10 @@
 				<h2>{{post.title}}</h2>
 			</div>
 		</div>
-		<img src="../assets/images/seol-photo.jpg" alt="" />
-		<div class="post__body">{{post.body}}</div>
+		<img *ngFor="let image of post.images" [src]="image.file" class="rounded mb-3" width="180">
+		<!--{{post.images[0].imageId}}-->
+		<!--<img src="../assets/images/seol-photo.jpg" alt="" />-->
+		<div class="post__body">{{post?.body}}</div>
 		<div class="post__footer">
 			<span class="material-icons"> favorite_border </span>
 			<span class="material-icons"> notes </span>

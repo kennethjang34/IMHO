@@ -24,7 +24,7 @@ namespace IMHO.Controllers
         {
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("Images/{imageId}")]
         public async Task<IActionResult> GetImage(int imageId)
         {
@@ -41,15 +41,15 @@ namespace IMHO.Controllers
             var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             var author = userService.GetUserByExternalProvider("google", nameIdentifier);
             string? storagePath = null;
-            Console.WriteLine("Image controller");
             var image = _db.Images.FirstOrDefault(img => img.ImageId == imageId);
             var folderName = Path.Combine("Resources", "Images");
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
             var fullFileName = image.GetFullFileName();
             var fullPath = Path.Combine(folderPath, fullFileName);
+            Console.WriteLine($"File path is {fullPath}");
             bool result = System.IO.File.Exists(fullPath);
             var img = System.IO.File.OpenRead(fullPath);
-            return File(img, $"image/{image.Format}");
+            return File(img, $"image/{image.Format.Replace(".", string.Empty)}");
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
