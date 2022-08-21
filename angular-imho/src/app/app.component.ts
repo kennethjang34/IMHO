@@ -3,6 +3,8 @@ import {JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
 import {authCodeFlowConfig} from './imho.config';
 import {filter} from 'rxjs/operators';
 import {Router} from '@angular/router';
+//import {}
+import {UserEffects} from './state/users';
 
 
 
@@ -14,7 +16,12 @@ import {Router} from '@angular/router';
 })
 export class AppComponent {
 	title = 'angular-imho';
-	constructor(private router: Router, private oauthService: OAuthService) {
+
+	//post$: Observable<Post> = this.postService.post$;
+	//user$: Observable<User> = this.userService.user$;
+	constructor(private router: Router, private oauthService: OAuthService,
+		//private userService: UserEffects
+	) {
 		// Remember the selected configuration
 		this.configureCodeFlow();
 		// Automatically load user profile

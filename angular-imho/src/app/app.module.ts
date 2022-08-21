@@ -19,6 +19,7 @@ import {SilentCallbackComponent} from './components/silent-callback/silent-callb
 import {HomeComponent} from './components/home/home.component';
 import {OAuthModule, OAuthService} from 'angular-oauth2-oidc';
 import {Router, RouterModule, Routes} from '@angular/router';
+import {AppStateModule} from './state/state.module'
 import {JwtInterceptor} from './services/auth.service';
 @NgModule({
 	declarations: [
@@ -32,11 +33,10 @@ import {JwtInterceptor} from './services/auth.service';
 		LogoutCallbackComponent,
 		SilentCallbackComponent,
 		HomeComponent
-
 	],
 	imports: [
 		BrowserModule,
-		AppRoutingModule, FontAwesomeModule, FormsModule, HttpClientModule
+		AppRoutingModule, FontAwesomeModule, FormsModule, HttpClientModule, AppStateModule
 	],
 	providers: [OAuthService, {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}, {provide: "API_ADDRESS", useValue: "https://localhost:7089/"}],
 	bootstrap: [AppComponent]

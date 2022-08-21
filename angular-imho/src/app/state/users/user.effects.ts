@@ -1,22 +1,14 @@
-
 import {Injectable} from '@angular/core';
 import {Effect, Actions, ofType} from '@ngrx/effects';
 import {Store} from '@ngrx/store'
-//import * as firebase from 'firebase';
-
 import {Observable, of, from, switchMap, map, catchError, defer} from 'rxjs';
-//import {defer} from 'rxjs/observable/defer';
-import '../../utils/rxjs.operators';
-
 import {AppState} from '../state';
 import {User} from './user.model';
 import {UsersQuery} from './user.reducer';
-
 import * as userActions from './user.actions';
 import {OAuthService} from 'angular-oauth2-oidc';
+import {AuthService} from 'src/app/services/auth.service';
 type Action = userActions.All;
-
-
 @Injectable()
 export class UserEffects {
 
@@ -44,26 +36,23 @@ export class UserEffects {
 	/**
 	 *Google OAuth
 	 */
-	@Effect() login$: Observable<Action> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
+	@Effect() loginGoogle$: Observable<Action> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
 		, map((action: userActions.GoogleLogin) => action.payload)
 		, switchMap((payload: any) => {
 			return from(this.googleLogin());
 		})
-		, map((credential: any) => {
-			// successful login
-			return new userActions.GetUser(credential);
-		})
+		//, map((credential: any) => {
+		//// successful login
+		//return new userActions.GetUser(credential);
+		//})
 		, catchError((err: any) => {
 			return of(new userActions.AuthError({error: err.message}));
 		}));
-
-
 	@Effect() logout$: Observable<Action> = this.actions$.pipe(ofType(userActions.LOGOUT)
-		, map((action: userActions.Logout) => action.payload)
-		, switchMap((payload: any) => {
-			return of(123);
+		, switchMap((action: userActions.Logout) => {
+			return from(this.logout());
 		})
-		, map((authData: any) => {
+		, map(() => {
 			return new userActions.NotAuthenticated();
 		})
 		, catchError((err: any) => of(new userActions.AuthError({error: err.message}))));
@@ -81,7 +70,7 @@ export class UserEffects {
 	constructor(
 		private actions$: Actions,
 		private store: Store<AppState>,
-		private oauthService: OAuthService,
+		private authService: AuthService,
 	) {}
 
 	/**
@@ -99,7 +88,6 @@ export class UserEffects {
 		this.store.dispatch(new userActions.Logout());
 		return this.user$;
 	}
-
 	// ******************************************
 	// Internal Methods
 	// ******************************************
@@ -107,7 +95,7 @@ export class UserEffects {
 
 	protected googleLogin(): Promise<any> {
 		//const provider = new firebase.auth.GoogleAuthProvider();
-		return null;
+		return this.authService.loginCode();
 		//return this.afAuth.auth.signInWithPopup(provider);
 	}
 

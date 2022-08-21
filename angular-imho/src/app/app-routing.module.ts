@@ -10,25 +10,8 @@ import {SilentCallbackComponent} from './components/silent-callback/silent-callb
 import {OktaCallbackComponent} from '@okta/okta-angular';
 
 
-//@Injectable()
-//export class AuthGuard implements CanActivate {
-//constructor(private readonly authService: AuthService) {
-
-//}
-//async canActivate(): Promise<boolean> {
-//if (this.authService.isLoggedIn()) {
-//return true;
-//}
-//await this.authService.startAuthentication();
-//return false;
-//}
-//}
 const routes: Routes = [
 	{path: 'home', component: HomeComponent}, {path: 'auth', component: LoginCallbackComponent}, {path: 'google-signout', component: LogoutCallbackComponent}, {path: '**', redirectTo: 'home'}
-	//{path: 'home', canActivate: [AuthGuard], component: FeedHomeComponent},
-	//{path: 'login-callback', component: LoginCallbackComponent},
-	//{path: 'home', component: LogoutCallbackComponent},
-	//{path: 'home', component: SilentCallbackComponent},
 ];
 
 @NgModule({
