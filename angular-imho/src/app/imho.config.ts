@@ -1,5 +1,6 @@
 import {AuthConfig} from 'angular-oauth2-oidc';
 
+import {authCodeFlowConfig} from './imho.config';
 export const authCodeFlowConfig: AuthConfig = {
 	// Url of the Identity Provider
 	issuer: 'https://accounts.google.com',
