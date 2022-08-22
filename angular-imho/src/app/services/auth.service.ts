@@ -1,9 +1,15 @@
 import {Injectable} from '@angular/core';
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable, BehaviorSubject, } from 'rxjs';
 import {OAuthService} from 'angular-oauth2-oidc';
 import {authCodeFlowConfig} from '../imho.config';
 import {ActivatedRoute} from '@angular/router';
+import {filter} from 'rxjs/operators';
+import {Store} from '@ngrx/store'
+import {AppState} from '../state/state';
+import {UserActions} from '../state/users';
+import {User} from 'oidc-client';
+import {User as AppUser} from '../state/users'
 @Injectable(
 
 )
@@ -28,14 +34,33 @@ export class AuthService {
 	public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 	private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
 	public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
+	private authServerUrl = "localhost:4200/";
+	private headers: HttpHeaders;
+	private httpOptions: {headers?: HttpHeaders};
 	loginFailed: boolean = false;
 	userProfile?: object;
 	usePopup: boolean = false;
 	login: boolean = false;
 	constructor(
 		private route: ActivatedRoute,
-		private oauthService: OAuthService
+		private oauthService: OAuthService, private store: Store<AppState>, private http: HttpClient
 	) {
+		this.oauthService.events
+			.pipe(filter((e) => e.type === 'token_received'))
+			.subscribe((_) => {
+				this.store.dispatch(new UserActions.OidcAuthenticated(this.id_token));
+				this.getUserData(this.id_token).subscribe((user: AppUser) => {
+					console.log("AppUser received from the auth server");
+					console.log(user);
+					this.store.dispatch(new UserActions.Authenticated(user));
+				});
+			});
+	}
+
+	getUserData(idToken: string): any {
+		const claims = this.oauthService.getIdentityClaims();
+		const userDataUrl = `${this.authServerUrl}user-profile?type=oidc&iss=${claims['iss']}&sub=${claims['sub']}`
+		return this.http.get<AppUser>(userDataUrl, this.httpOptions);
 	}
 	get hasValidAccessToken() {
 		return this.oauthService.hasValidAccessToken();
@@ -61,7 +86,6 @@ export class AuthService {
 	}
 	logout() {
 		this.oauthService.revokeTokenAndLogout();
-
 	}
 	loadUserProfile(): void {
 		this.oauthService.loadUserProfile().then((up) => (this.userProfile = up));
@@ -72,6 +96,11 @@ export class AuthService {
 
 	stopAutomaticRefresh(): void {
 		this.oauthService.stopAutomaticRefresh();
+	}
+	get userId() {
+		var claims = this.oauthService.getIdentityClaims();
+		if (!claims) return null;
+		return claims['sub'];
 	}
 
 	get givenName() {

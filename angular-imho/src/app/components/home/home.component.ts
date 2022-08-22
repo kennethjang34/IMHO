@@ -5,27 +5,24 @@ import {authCodeFlowConfig} from '../../imho.config';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject, filter} from 'rxjs';
 import {AuthService} from 'src/app/services/auth.service';
-
+import {Store} from '@ngrx/store'
+import {UserActions} from 'src/app/state/users';
 @Component({
 	templateUrl: './home.component.html',
 	styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
 	//public hasLoggedIn: boolean = false;
-	constructor(private authService: AuthService) {}
+	constructor(private authService: AuthService, private store: Store) {}
 	ngOnInit(): void {
-		//if (this.authService.hasValidIdToken) {
-		//this.hasLoggedIn = true;
-		//} else {
-		//this.hasLoggedIn = false;
-		//}
 	}
 	login(): void {
-		this.authService.loginCode();
+		this.store.dispatch(new UserActions.GoogleLogin());
+		//this.authService.loginCode();
 	}
 	logout(): void {
-		this.authService.logout();
-		//this.hasLoggedIn = false;
+		this.store.dispatch(new UserActions.Logout());
+		//this.authService.logout();
 	}
 	get hasLoggedIn(): boolean {
 		return this.authService.hasValidIdToken;

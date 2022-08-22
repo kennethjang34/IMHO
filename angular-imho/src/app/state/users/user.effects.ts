@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Effect, Actions, ofType} from '@ngrx/effects';
 import {Store} from '@ngrx/store'
-import {Observable, of, from, switchMap, map, catchError, defer} from 'rxjs';
+import {Observable, of, from, switchMap, map, catchError, defer, tap} from 'rxjs';
 import {AppState} from '../state';
 import {User} from './user.model';
 import {UsersQuery} from './user.reducer';
@@ -23,7 +23,7 @@ export class UserEffects {
 	// ************************************************
 
 	@Effect()
-	getUser$: Observable<Action> = this.actions$.pipe(ofType(userActions.GET_USER)
+	getUser$: Observable<any> = this.actions$.pipe(ofType(userActions.GET_USER)
 		, map((action: userActions.GetUser) => {
 			const authData = action.payload;
 			if (authData) {
@@ -36,11 +36,18 @@ export class UserEffects {
 	/**
 	 *Google OAuth
 	 */
-	@Effect() loginGoogle$: Observable<Action> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
-		, map((action: userActions.GoogleLogin) => action.payload)
-		, switchMap((payload: any) => {
-			return from(this.googleLogin());
+	@Effect() loginGoogle$: Observable<any> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
+		, map((action: userActions.GoogleLogin) => {
+			//console.log(`google login action object: ${action}`);
+			//console.log(action);
+			this.authService.loginCode();
+			return action.payload;
+			//return action.payload;
 		})
+
+		//switchMap((payload: any) => {
+		//return from(this.googleLogin());
+		//})
 		//, map((credential: any) => {
 		//// successful login
 		//return new userActions.GetUser(credential);
@@ -48,13 +55,15 @@ export class UserEffects {
 		, catchError((err: any) => {
 			return of(new userActions.AuthError({error: err.message}));
 		}));
-	@Effect() logout$: Observable<Action> = this.actions$.pipe(ofType(userActions.LOGOUT)
-		, switchMap((action: userActions.Logout) => {
-			return from(this.logout());
+	@Effect() logout$: Observable<any> = this.actions$.pipe(ofType(userActions.LOGOUT)
+		, map((action: userActions.Logout) => {
+			this.authService.logout();
+			return action.payload;
+			//return from(this.logout());
 		})
-		, map(() => {
-			return new userActions.NotAuthenticated();
-		})
+		//, map(() => {
+		//return new userActions.NotAuthenticated();
+		//})
 		, catchError((err: any) => of(new userActions.AuthError({error: err.message}))));
 
 	@Effect({dispatch: false})

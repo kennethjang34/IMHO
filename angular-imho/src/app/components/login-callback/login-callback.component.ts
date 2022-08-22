@@ -14,11 +14,6 @@ export class LoginCallbackComponent implements OnInit {
 	private access_token?: any;
 	constructor(private readonly authService: OAuthService, private readonly router: Router, private store: Store<AppState>) {}
 	ngOnInit(): void {
-		//this.authService.completeAuthentication();
-		//this.authService..then(token => {
-		//console.log('Token in component:', token);
-		//});
-		//this.access_token = this.authService.getAccessToken();
 		this.authService.configure(authCodeFlowConfig);
 		this.authService.oidc = true;
 		this.authService.setStorage(sessionStorage);
@@ -30,13 +25,13 @@ export class LoginCallbackComponent implements OnInit {
 		this.authService.loadDiscoveryDocument().then(() => {
 			this.authService.tryLoginCodeFlow(options);
 		}).then(
-			(credential) => {
-				//this.authService.loadUserProfile().then((credential) => {
-				//})
-				//
+			() => {
+				this.authService.loadUserProfile().then((credential) => {
+					console.log(`credential from google is: ${credential}`);
+				})
+
 				////
 				////Credential supposed to contain userId,userName fields
-				console.log(`credential from google is: ${credential}`);
 				//this.store.dispatch(new UserActions.GoogleLogin(credential));
 			}
 		);

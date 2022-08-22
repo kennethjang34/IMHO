@@ -7,6 +7,7 @@ export const AUTHENTICATED = '[Auth] Authenticated';
 export const NOT_AUTHENTICATED = '[Auth] Not Authenticated';
 
 export const GOOGLE_LOGIN = '[Auth] Google login attempt';
+export const OIDC_AUTHENTICATED = '[Auth] OIDC-Authenticated'
 export const LOGOUT = '[Auth] Logout';
 
 export const AUTH_ERROR = '[Auth] Error';
@@ -19,6 +20,10 @@ export class GetUser implements Action {
 }
 export class Authenticated implements Action {
 	readonly type = AUTHENTICATED;
+	constructor(public payload?: any) {}
+}
+export class OidcAuthenticated implements Action {
+	readonly type = OIDC_AUTHENTICATED;
 	constructor(public payload?: any) {}
 }
 export class NotAuthenticated implements Action {

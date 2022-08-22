@@ -3,8 +3,10 @@ import {JwksValidationHandler, OAuthService} from 'angular-oauth2-oidc';
 import {authCodeFlowConfig} from './imho.config';
 import {filter} from 'rxjs/operators';
 import {Router} from '@angular/router';
-//import {}
+import {Store} from '@ngrx/store'
 import {UserEffects} from './state/users';
+import {AppState} from './state/state';
+import {UserActions} from './state/users/';
 
 
 
@@ -19,20 +21,11 @@ export class AppComponent {
 
 	//post$: Observable<Post> = this.postService.post$;
 	//user$: Observable<User> = this.userService.user$;
-	constructor(private router: Router, private oauthService: OAuthService,
+	constructor(private router: Router, private oauthService: OAuthService, private store: Store<AppState>
 		//private userService: UserEffects
 	) {
 		// Remember the selected configuration
 		this.configureCodeFlow();
-		// Automatically load user profile
-		this.oauthService.events
-			.pipe(filter((e) => e.type === 'token_received'))
-			.subscribe((_) => {
-				console.debug('state', this.oauthService.state);
-				this.oauthService.loadUserProfile();
-				const scopes = this.oauthService.getGrantedScopes();
-				console.debug('scopes', scopes);
-			});
 	}
 	private configureCodeFlow() {
 		this.oauthService.configure(authCodeFlowConfig);
