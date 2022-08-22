@@ -57,12 +57,6 @@ public class AccountController : Controller
         Console.WriteLine($"Author: {author}");
         return Ok(author);
     }
-    //public IActionResult GetUserData([FromQuery(N]){
-    //return Ok();
-
-    //}
-
-    //[FromQuery(Name = "post-id")] int postId
 
     //return login page
     [HttpGet("login")]

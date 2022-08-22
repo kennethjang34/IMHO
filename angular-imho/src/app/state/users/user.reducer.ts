@@ -17,7 +17,7 @@ export interface UserState {
 }
 
 /// Reducer function
-export function userReducer(state: UserState = {user: defaultUser, loading: true}, action: Action): UserState {
+export function userReducer(state: UserState = {...defaultUser, loading: true}, action: Action): UserState {
 	const userAction = action as UserAction;
 	switch (userAction.type) {
 		case userActions.GET_USER:
@@ -25,13 +25,16 @@ export function userReducer(state: UserState = {user: defaultUser, loading: true
 		case userActions.GOOGLE_LOGIN:
 			return {...state, loading: true};
 		case userActions.AUTHENTICATED:
+			console.log(userAction.payload);
+			//return {...state, user: {...userAction.payload}, loading: false}
 			return {...state, ...userAction.payload, loading: false};
 		case userActions.NOT_AUTHENTICATED:
-			return {...state, ...defaultUser, loading: false};
+			return {...state, loading: false};
 		case userActions.AUTH_ERROR:
 			return {...state, ...userAction.payload, loading: false};
 		case userActions.LOGOUT:
-			return {...state, loading: true};
+			return {...defaultUser, loading: true}
+		//return {...state, loading: true};
 		default:
 			return state;
 	}
