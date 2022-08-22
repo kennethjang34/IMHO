@@ -36,7 +36,8 @@ export class UserEffects {
 	/**
 	 *Google OAuth
 	 */
-	@Effect() loginGoogle$: Observable<any> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
+
+	@Effect({dispatch: false}) loginGoogle$: Observable<any> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
 		, map((action: userActions.GoogleLogin) => {
 			//console.log(`google login action object: ${action}`);
 			//console.log(action);
@@ -55,11 +56,12 @@ export class UserEffects {
 		, catchError((err: any) => {
 			return of(new userActions.AuthError({error: err.message}));
 		}));
-	@Effect() logout$: Observable<any> = this.actions$.pipe(ofType(userActions.LOGOUT)
+	@Effect({dispatch: false}) logout$: Observable<any> = this.actions$.pipe(ofType(userActions.LOGOUT)
 		, map((action: userActions.Logout) => {
+			//console.log(action);
 			this.authService.logout();
 			return action.payload;
-			//return from(this.logout());
+			//return action.payload ?? null;
 		})
 		//, map(() => {
 		//return new userActions.NotAuthenticated();
