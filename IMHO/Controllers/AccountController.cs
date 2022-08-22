@@ -45,6 +45,25 @@ public class AccountController : Controller
         IEnumerable<Account> objAccountyList = _db.Accounts;
         return View(objAccountyList);
     }
+
+    [Authorize]
+    [HttpGet("oidc-api/user-profile")]
+    public IActionResult GetUserData()
+    {
+        var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+        ClaimsIdentity identity = User.Identity as ClaimsIdentity ?? throw new Exception("User.Identity is null or cannot be converted to ClaimsIdentity");
+        string nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value ?? throw new Exception("NameIdentifier value cannot be null");
+        var author = _userService.GetUserByExternalProvider("google", nameIdentifier);
+        Console.WriteLine($"Author: {author}");
+        return Ok(author);
+    }
+    //public IActionResult GetUserData([FromQuery(N]){
+    //return Ok();
+
+    //}
+
+    //[FromQuery(Name = "post-id")] int postId
+
     //return login page
     [HttpGet("login")]
     //[ValidateAntiForgeryToken]

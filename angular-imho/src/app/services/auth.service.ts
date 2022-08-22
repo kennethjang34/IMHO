@@ -34,7 +34,7 @@ export class AuthService {
 	public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 	private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
 	public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
-	private authServerUrl = "localhost:4200/";
+	private authServerUrl = "https://localhost:7089";
 	private headers: HttpHeaders;
 	private httpOptions: {headers?: HttpHeaders};
 	loginFailed: boolean = false;
@@ -48,7 +48,7 @@ export class AuthService {
 		this.oauthService.events
 			.pipe(filter((e) => e.type === 'token_received'))
 			.subscribe((_) => {
-				this.store.dispatch(new UserActions.OidcAuthenticated(this.id_token));
+				//this.store.dispatch(new UserActions.OidcAuthenticated(this.id_token));
 				this.getUserData(this.id_token).subscribe((user: AppUser) => {
 					console.log("AppUser received from the auth server");
 					console.log(user);
@@ -56,10 +56,10 @@ export class AuthService {
 				});
 			});
 	}
-
 	getUserData(idToken: string): any {
 		const claims = this.oauthService.getIdentityClaims();
-		const userDataUrl = `${this.authServerUrl}user-profile?type=oidc&iss=${claims['iss']}&sub=${claims['sub']}`
+		const userDataUrl = `${this.authServerUrl}/oidc-api/user-profile`
+		console.log(userDataUrl);
 		return this.http.get<AppUser>(userDataUrl, this.httpOptions);
 	}
 	get hasValidAccessToken() {

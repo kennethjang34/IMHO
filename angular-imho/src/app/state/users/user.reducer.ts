@@ -19,8 +19,6 @@ export interface UserState {
 /// Reducer function
 export function userReducer(state: UserState = {user: defaultUser, loading: true}, action: Action): UserState {
 	const userAction = action as UserAction;
-	console.log("Inside User Reducer:");
-	console.log(userAction.payload);
 	switch (userAction.type) {
 		case userActions.GET_USER:
 			return {...state, loading: true};
