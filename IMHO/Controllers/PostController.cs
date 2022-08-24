@@ -22,23 +22,31 @@ namespace IMHO.Controllers
         : base(db, userService, logger)
         {
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]
         public async Task<IActionResult> NewPost(IFormCollection collection, IList<IFormFile> images)
         {
+            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            Account? author = null;
             if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
             {
+                var identity = User.Identity as ClaimsIdentity;
+                var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                 var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
+                author = userService.GetUserByExternalProvider("google", nameIdentifier);
             }
             else
             {
-                Console.WriteLine("no user");
+                Console.WriteLine("no user, default admin user (google account) will be used");
+                author = userService.GetUserByExternalProvider("google", "117945655236360512577");
             }
-            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            var identity = User.Identity as ClaimsIdentity;
-            var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var author = userService.GetUserByExternalProvider("google", nameIdentifier);
+            Console.WriteLine($"User account obtained: {author}");
+
+            //var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            //var identity = User.Identity as ClaimsIdentity;
+            //var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            //var author = userService.GetUserByExternalProvider("google", nameIdentifier);
             //foreach (var c in collection)
             //{
             //Console.WriteLine(c.ToString());

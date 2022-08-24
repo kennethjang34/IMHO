@@ -57,7 +57,6 @@ public class AccountController : Controller
         Console.WriteLine($"Author: {author}");
         return Ok(author);
     }
-
     //return login page
     [HttpGet("login")]
     //[ValidateAntiForgeryToken]
@@ -111,7 +110,6 @@ public class AccountController : Controller
             var properties = new AuthenticationProperties();
             properties.RedirectUri = redirectUri;
             return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme, scheme }, properties);
-            //return new SignOutResult(new[] { CookieAuthenticationDefaults.AuthenticationScheme });
         }
     }
     [HttpGet("login/{provider}")]

@@ -63,9 +63,6 @@ export class UserEffects {
 			return action.payload;
 			//return action.payload ?? null;
 		})
-		//, map(() => {
-		//return new userActions.NotAuthenticated();
-		//})
 		, catchError((err: any) => of(new userActions.AuthError({error: err.message}))));
 
 	@Effect({dispatch: false})
