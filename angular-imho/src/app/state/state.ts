@@ -1,8 +1,8 @@
 
-import {Post} from './posts';
-import {User} from './users';
+import {PostState} from './posts';
+import {UserState} from './users';
 
 export interface AppState {
-	posts: Post[];
-	user: User;
+	postState: PostState;
+	userState: UserState;
 }

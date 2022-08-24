@@ -2,18 +2,14 @@
 import {AppState} from '../state';
 import {createReducer, on, State, Action} from '@ngrx/store';
 import * as userActions from './user.actions';
-import {IUser, User} from './user.model';
+import {IUser, User, UserState} from './user.model';
 export type UserAction = userActions.All;
 const defaultUser = new User(null, 'GUEST');
 /**
  * Define all store queries for Post(s)
  */
 export namespace UsersQuery {
-	export const getUser = (state: AppState) => state.user;
-}
-export interface UserState {
-	loading: boolean,
-	user?: IUser,
+	export const getUser = (state: AppState) => state.userState;
 }
 /// Reducer function
 export function userReducer(state: UserState = {...defaultUser, loading: true}, action: Action): UserState {

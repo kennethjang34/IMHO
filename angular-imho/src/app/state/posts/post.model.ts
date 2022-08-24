@@ -15,6 +15,11 @@ export class Image {
 	}
 }
 
+export interface PostState {
+	loading: boolean,
+	posts: Post[],
+	images: Image[],
+}
 export class Post {
 	[key: string]: string | number | boolean | File | Array<Image> | undefined;
 	//postId?: number,
@@ -25,7 +30,6 @@ export class Post {
 	////image?: any;
 	//images?: Array<Image>
 	constructor(public postId?: number, public title?: string, public body?: string, public channelId?: string, public tagId?: string, public images?: Array<Image>) {}
-
 	//images?: Array<File>;
 	//imageCaptions?: Array<string>;
 }

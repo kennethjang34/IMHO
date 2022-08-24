@@ -15,10 +15,10 @@ import {PostEffects} from './posts';
 			UserEffects,
 			PostEffects
 		]),
-		StoreModule.forRoot({user: userReducer, post: postReducer}),
+		StoreModule.forRoot({userState: userReducer, postState: postReducer}),
 		StoreDevtoolsModule.instrument({maxAge: 25}),
 	],
-	providers: [UserEffects],
-	exports: []
+	providers: [UserEffects,],
+	exports: [StoreModule]
 })
 export class AppStateModule {}

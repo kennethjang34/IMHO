@@ -8,3 +8,7 @@ export interface IUser {
 export class User {
 	constructor(public userId: string, public userName: string) {}
 }
+export interface UserState {
+	loading: boolean,
+	user?: IUser,
+}

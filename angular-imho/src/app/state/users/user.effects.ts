@@ -70,10 +70,6 @@ export class UserEffects {
 		return of(123);
 	});
 
-	// ************************************************
-	// Internal Code
-	// ************************************************
-
 	constructor(
 		private actions$: Actions,
 		private store: Store<AppState>,
@@ -83,18 +79,18 @@ export class UserEffects {
 	/**
 	 *
 	 */
-	login(): Observable<User> {
-		this.store.dispatch(new userActions.GoogleLogin());
-		return this.user$;
-	}
+	//login(): Observable<User> {
+	//this.store.dispatch(new userActions.GoogleLogin());
+	//return this.user$;
+	//}
 
 	/**
 	 *
 	 */
-	logout(): Observable<User> {
-		this.store.dispatch(new userActions.Logout());
-		return this.user$;
-	}
+	//logout(): Observable<User> {
+	//this.store.dispatch(new userActions.Logout());
+	//return this.user$;
+	//}
 	// ******************************************
 	// Internal Methods
 	// ******************************************

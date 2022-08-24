@@ -23,14 +23,14 @@ export class PostEffects {
 	makePost$: Observable<any> = this.actions$.pipe(ofType(postActions.MAKE_POST)
 		, map((action: postActions.MakePost) => {
 			const post: Post = action.payload;
-			console.log(post);
+			//console.log(post);
 			if (post === null) {
 				throw new Error("Post to be made cannot be null!");
 			} else {
 				this.postService.makePost(post).subscribe((res) => {
-					const newPost: Post = {body: res.body, title: res.title, id: res.id, channelId: res.channelId, tagId: res.tagId, images: []};
+					const newPost: Post = {body: res.body, title: res.title, postid: res['postId'], channelId: res.channelId, tagId: res.tagId, images: []};
 					this.imageService.getImageFiles([...(res.images)]).subscribe((img: Image) => {
-						console.log(img);
+						//console.log(img);
 						newPost.images.push(img);
 						this.store.dispatch(new postActions.PostMade(newPost));
 					});
