@@ -22,6 +22,29 @@ namespace IMHO.Controllers
         : base(db, userService, logger)
         {
         }
+
+
+        [HttpGet("posts/{userId}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Posts()
+        {
+
+            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            var account = userService.GetUserByExternalProvider("google", "117945655236360512577");
+            return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.Title == "test"));
+
+            //return Json(_db.Posts.AsEnumerable().Select((p)=>{
+            //return p.AuthorId==userService.GetUserByExternalProvider("google","117945655236360512577").userId;
+
+            //}))
+
+
+        }
+
+
+
+
+
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]

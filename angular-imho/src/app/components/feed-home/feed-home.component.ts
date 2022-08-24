@@ -24,9 +24,7 @@ export class FeedHomeComponent implements OnInit {
 	}
 	ngOnInit(): void {
 		this.postState$.subscribe((state: PostState) => {
-			console.log("weird");
 			this.posts = state.posts;
-			console.log(this.posts);
 		});
 		this.getPosts();
 	}
