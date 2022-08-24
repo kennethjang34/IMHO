@@ -15,7 +15,6 @@ export interface UserState {
 	loading: boolean,
 	user?: IUser,
 }
-
 /// Reducer function
 export function userReducer(state: UserState = {...defaultUser, loading: true}, action: Action): UserState {
 	const userAction = action as UserAction;
@@ -34,7 +33,6 @@ export function userReducer(state: UserState = {...defaultUser, loading: true}, 
 			return {...state, ...userAction.payload, loading: false};
 		case userActions.LOGOUT:
 			return {...defaultUser, loading: true}
-		//return {...state, loading: true};
 		default:
 			return state;
 	}

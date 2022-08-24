@@ -94,7 +94,6 @@ namespace IMHO.Controllers
                 _db.SaveChanges();
                 TempData["success"] = "The new post successfully created";
                 Console.WriteLine("Successful");
-                //return Ok(Json(post));
                 return Json(post);
             }
             else

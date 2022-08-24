@@ -14,15 +14,17 @@ export class Image {
 		this.imageUrl = url;
 	}
 }
-export interface Post {
+
+export class Post {
 	[key: string]: string | number | boolean | File | Array<Image> | undefined;
-	id?: number,
-	title?: string;
-	body?: string;
-	channelId?: string;
-	tagId?: string;
-	//image?: any;
-	images?: Array<Image>
+	//postId?: number,
+	//title?: string;
+	//body?: string;
+	//channelId?: string;
+	//tagId?: string;
+	////image?: any;
+	//images?: Array<Image>
+	constructor(public postId?: number, public title?: string, public body?: string, public channelId?: string, public tagId?: string, public images?: Array<Image>) {}
 
 	//images?: Array<File>;
 	//imageCaptions?: Array<string>;

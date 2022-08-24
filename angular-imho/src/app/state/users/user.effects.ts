@@ -36,7 +36,6 @@ export class UserEffects {
 	/**
 	 *Google OAuth
 	 */
-
 	@Effect({dispatch: false}) loginGoogle$: Observable<any> = this.actions$.pipe(ofType(userActions.GOOGLE_LOGIN)
 		, map((action: userActions.GoogleLogin) => {
 			//console.log(`google login action object: ${action}`);

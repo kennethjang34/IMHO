@@ -6,13 +6,14 @@ import {postReducer} from './posts/post.reducer';
 import {UserEffects} from './users';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {PostEffects} from './posts';
 @NgModule({
 	declarations: [],
 	imports: [
 		CommonModule,
 		EffectsModule.forRoot([
 			UserEffects,
-			//PostEffects
+			PostEffects
 		]),
 		StoreModule.forRoot({user: userReducer, post: postReducer}),
 		StoreDevtoolsModule.instrument({maxAge: 25}),
