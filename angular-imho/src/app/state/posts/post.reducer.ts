@@ -31,7 +31,7 @@ export function postReducer(state: PostState = {posts: [], loading: true, images
 		case postActions.POST_DELETED:
 			return {...state, posts: [...state.posts].filter((p) => {p !== postAction.payload.postId}), loading: false}
 		case postActions.POSTS_LOADED:
-			return {...state, posts: [...state.posts, ...(postAction.payload)], loading: false};
+			return {...state, posts: [...state.posts, postAction.payload], loading: false};
 		default:
 			return state;
 	}

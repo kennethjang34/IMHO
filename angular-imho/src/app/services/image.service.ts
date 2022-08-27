@@ -12,7 +12,7 @@ export class ImageService {
 	private httpHeaders: HttpHeaders;
 	private httpOptions: any;
 	constructor(private injector: Injector, private http: HttpClient, private sanitizer: DomSanitizer) {
-		this.apiUrl = this.injector.get('API_ADDRESS') + "images/";
+		this.apiUrl = this.injector.get('API_ADDRESS') + "/images/";
 		this.httpHeaders = new HttpHeaders();
 		this.httpHeaders.append('observe', 'response');
 		this.httpHeaders.append('accept', 'image/jpeg');
@@ -20,7 +20,6 @@ export class ImageService {
 		this.httpOptions = {headers: this.httpHeaders, responseType: 'blob' as 'json'};
 	}
 	getImageFiles(images: Array<Image>): Observable<Image> {
-		const downloaded: Array<Image> = [];
 		const imageDownloaders: Array<Observable<Image>> = [];
 		images.forEach(image => {
 			imageDownloaders.push(this.getImageFile(image));

@@ -1,19 +1,15 @@
 <div>
-	<!--<app-login-callback ()>-->
-	<!--</app-login-callback>-->
-	<!--<div *ngIf="!hasLoggedIn" class="panel panel-default">-->
-	<!--<div class="panel-body">-->
-	<!--<h2>Login Page</h2>-->
-	<!--<p>-->
-	<!--<button class="btn btn-default" (click)="login()">Login</button>-->
-	<!--[><button class="btn btn-default" (click)="logout()">Logout</button><]-->
-	<!--</p>-->
-	<!--</div>-->
-	<!--</div>-->
-	<!--<div *ngIf="hasLoggedIn">-->
-	<!--<button class="btn btn-default" (click)="logout()">Logout</button>-->
-	<app-sidebar (onLogout)="logout()"></app-sidebar>
-	<app-feed-home></app-feed-home>
-	<app-widget></app-widget>
-	<!--</div>-->
+	<div *ngIf="!hasLoggedIn" class="panel panel-default">
+		<div class="panel-body">
+			<h2>Login Page</h2>
+			<button class="btn btn-default" (click)="login()">Login</button>
+			<button class="btn btn-default" (click)="logout()">Logout</button>
+		</div>
+	</div>
+	<div *ngIf="hasLoggedIn">
+		<!--<button class="btn btn-default" (click)="logout()">Logout</button>-->
+		<app-sidebar (onLogout)="logout()"></app-sidebar>
+		<app-feed-home></app-feed-home>
+		<app-widget></app-widget>
+	</div>
 </div>

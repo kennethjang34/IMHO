@@ -38,7 +38,7 @@ import {JwtInterceptor} from './services/auth.service';
 		BrowserModule,
 		AppRoutingModule, FontAwesomeModule, FormsModule, HttpClientModule, AppStateModule
 	],
-	providers: [OAuthService, {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}, {provide: "API_ADDRESS", useValue: "https://localhost:7089/"}],
+	providers: [OAuthService, {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}, {provide: "API_ADDRESS", useValue: "https://localhost:7089"}],
 	bootstrap: [AppComponent]
 })
 export class AppModule {

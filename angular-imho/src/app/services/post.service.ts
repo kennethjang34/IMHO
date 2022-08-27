@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {map, Observable, of} from 'rxjs';
+import {forkJoin, map, merge, Observable, of, switchMap, toArray} from 'rxjs';
 import {Post} from '../post';
 import {ImageService} from './image.service';
+import {AuthService} from './auth.service';
+import {Image} from '../post';
 //const httpOptions = {
 //headers: new HttpHeaders({'Content-Type': 'application/json'})
 //};
@@ -15,18 +17,31 @@ export class PostService {
 	private testApiUrl = 'https://localhost:7089/post/newpost';
 	private httpOptions: {headers?: HttpHeaders};
 	posts: Post[] = [];
-	constructor(private http: HttpClient, private imageService: ImageService) {
+	constructor(private http: HttpClient, private imageService: ImageService, private authService: AuthService) {
 		//this.headers = new HttpHeaders({'Content-Type': 'multipart/form-data', 'Accept': 'multipart/form-data'});
 		this.headers = new HttpHeaders({});
 		this.httpOptions = {headers: this.headers};
 	}
-	getPosts(): Observable<Post[]> {
-		return this.http.get<Post[]>(this.apiUrl + "/1").pipe(map((posts: Array<Post>): Array<Post> => {
-			posts?.forEach(post => {
-				this.imageService.getImageFiles(post.images);
+	//getPosts() needs to return Observable<Post[]> in the end
+	getPosts(): Observable<Post> {
+		return this.http.get<Post[]>(`${this.apiUrl}?user-id=1`).pipe(switchMap((posts: Post[]): Observable<Post> => {
+			let imageDownloaders: Observable<Post>[] = [];
+			posts?.forEach((post: Post): void => {
+				imageDownloaders.push(this.imageService.getImageFiles(post.images).pipe(toArray(), map((images: Image[]) => {
+					post.images = images;
+					console.log("inside imageDownloaders, post:");
+					console.log(post);
+					return post;
+				})));
 			});
-			return posts;
+			return merge(...imageDownloaders);
 		}));
+		//return this.http.get<Post[]>(`${this.apiUrl}?user-id=${this.authService.userId}`).pipe(map((posts: Array<Post>): Array<Post> => {
+		//posts?.forEach(post => {
+		//this.imageService.getImageFiles(post.images);
+		//});
+		//return posts;
+		//}));
 	}
 	deletePost(post: Post): Observable<Post> {
 		const url = `${this.apiUrl}/${post.id}`;

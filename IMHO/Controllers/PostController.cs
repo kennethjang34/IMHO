@@ -22,59 +22,51 @@ namespace IMHO.Controllers
         : base(db, userService, logger)
         {
         }
-
-
-        [HttpGet("posts/{userId}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Posts()
+        [HttpGet("posts")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Posts([FromQuery(Name = "user-id")] int? userId)
         {
-
-            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            var account = userService.GetUserByExternalProvider("google", "117945655236360512577");
-            return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.Title == "test"));
-
-            //return Json(_db.Posts.AsEnumerable().Select((p)=>{
-            //return p.AuthorId==userService.GetUserByExternalProvider("google","117945655236360512577").userId;
-
-            //}))
-
-
+            Console.WriteLine("UserId: ");
+            Console.WriteLine(userId);
+            if (userId != null)
+            {
+                {
+                    var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+                    var identity = User.Identity as ClaimsIdentity;
+                    var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                    var account = userService.GetUserByExternalProvider("google", nameIdentifier);
+                    Console.WriteLine($"User account obtained: {account}");
+                    if (account.UserId == userId)
+                    {
+                        return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.PostId == 204));
+                    }
+                    else
+                    {
+                        return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.Published));
+                    }
+                }
+            }
+            else
+            {
+                return Ok();
+            }
         }
 
 
 
-
-
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]
         public async Task<IActionResult> NewPost(IFormCollection collection, IList<IFormFile> images)
         {
             var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            Account? author = null;
-            if (User != null && User.Identities.Any(identity => identity.IsAuthenticated))
+            var identity = User.Identity as ClaimsIdentity;
+            var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var author = userService.GetUserByExternalProvider("google", nameIdentifier);
+            foreach (var c in collection)
             {
-                var identity = User.Identity as ClaimsIdentity;
-                var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                var identity1 = User.Identities.FirstOrDefault(i => i.IsAuthenticated) as ClaimsIdentity;
-                author = userService.GetUserByExternalProvider("google", nameIdentifier);
+                Console.WriteLine(c.ToString());
             }
-            else
-            {
-                Console.WriteLine("no user, default admin user (google account) will be used");
-                author = userService.GetUserByExternalProvider("google", "117945655236360512577");
-            }
-            Console.WriteLine($"User account obtained: {author}");
-
-            //var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            //var identity = User.Identity as ClaimsIdentity;
-            //var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            //var author = userService.GetUserByExternalProvider("google", nameIdentifier);
-            //foreach (var c in collection)
-            //{
-            //Console.WriteLine(c.ToString());
-            //}
-            //var file = Request.Form.Files[0];
             string? storagePath = null;
             string title = collection["Title"];
             int tagId = Int32.Parse(collection["TagId"]);
