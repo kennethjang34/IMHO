@@ -1,4 +1,4 @@
-# IMHO, Well, Not so humble actually.
+# IMHO. Well, not so humble actually.
 
 ## A platform where you can share your humble opinion regarding the hottest topic in each channel!
 
