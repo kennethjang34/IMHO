@@ -1,6 +1,6 @@
 # IMHO. Well, not so humble actually.
 
-## A platform where you can share your humble opinion regarding the hottest topic in each channel!
+## A platform where you can share your humble opinions regarding the hottest topic with your favourite communities!
 
 Demo Video: https://youtu.be/J2Ynk8flQhk
 
