@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using IMHO.Services;
+//using System.Data.Entity;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Net.Http.Headers;
 using System.Net;
 using System.Net.Mime;
+using Microsoft.EntityFrameworkCore;
 namespace IMHO.Controllers
 {
     public class PostController
@@ -36,13 +38,18 @@ namespace IMHO.Controllers
                     var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                     var account = userService.GetUserByExternalProvider("google", nameIdentifier);
                     Console.WriteLine($"User account obtained: {account}");
+                    //_db.Posts.Include
                     if (account.UserId == userId)
                     {
-                        return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.PostId == 204));
+                        var fromQuery = _db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297).Include(p => p.Images);
+                        return Json(fromQuery);
+                        //return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297).Include(p => p.Images));
+                        //return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297));
                     }
                     else
                     {
-                        return Json(_db.Posts.AsEnumerable().Where((p) => p.AuthorId == account.UserId && p.Published));
+                        Console.WriteLine($"Account UserId doesn't match given userId in query");
+                        return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.Published).Include((p) => p.Images));
                     }
                 }
             }
@@ -51,9 +58,6 @@ namespace IMHO.Controllers
                 return Ok();
             }
         }
-
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]
