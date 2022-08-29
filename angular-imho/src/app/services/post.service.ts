@@ -13,9 +13,11 @@ import {Image} from '../post';
 })
 export class PostService {
 	private headers: HttpHeaders;
-	private apiUrl = 'https://localhost:7089/posts';
+	private apiUrl = 'https://localhost:7089/channels/-1/posts';
 	private testApiUrl = 'https://localhost:7089/post/newpost';
+	private channelId = -1;
 	private httpOptions: {headers?: HttpHeaders};
+
 	posts: Post[] = [];
 	constructor(private http: HttpClient, private imageService: ImageService, private authService: AuthService) {
 		//this.headers = new HttpHeaders({'Content-Type': 'multipart/form-data', 'Accept': 'multipart/form-data'});
@@ -24,7 +26,7 @@ export class PostService {
 	}
 	//getPosts() needs to return Observable<Post[]> in the end
 	getPosts(): Observable<Post> {
-		return this.http.get<Post[]>(`${this.apiUrl}?user-id=1`).pipe(switchMap((posts: Post[]): Observable<Post> => {
+		return this.http.get<Post[]>(`${this.apiUrl}`).pipe(switchMap((posts: Post[]): Observable<Post> => {
 			let imageDownloaders: Observable<Post>[] = [];
 			posts?.forEach((post: Post): void => {
 				imageDownloaders.push(this.imageService.getImageFiles(post.images).pipe(toArray(), map((images: Image[]) => {

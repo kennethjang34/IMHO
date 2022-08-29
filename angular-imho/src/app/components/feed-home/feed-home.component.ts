@@ -27,7 +27,9 @@ export class FeedHomeComponent implements OnInit {
 			this.posts = state.posts;
 		});
 		this.getPosts();
-
+	}
+	reloadClicked(): void {
+		this.getPosts();
 	}
 	getPosts() {
 		this.store.dispatch(new PostActions.GetPosts());
@@ -42,5 +44,6 @@ export class FeedHomeComponent implements OnInit {
 		post[key] = newValue;
 		this.postService.updatePost(post).subscribe();
 	}
+
 
 }

@@ -1,6 +1,8 @@
 <div class="feed">
 	<div class="feed__header">
 		<h2>Home</h2>
+
+		<span class="material-icons loadPostButton" (click)="reloadClicked()">refresh</span>
 	</div>
 	<app-feed-input (onMakePost)="makePost($any($event))"></app-feed-input>
 	<div *ngIf="postState$ | async as postState">

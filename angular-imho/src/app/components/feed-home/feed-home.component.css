@@ -28,5 +28,22 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-
-
+span { line-height: 100%;  }
+.loadPostButton {
+    line-height:100%;
+  /*background-color: var(--icon-color);*/
+  border: none;
+  overflow:hidden;
+  color: black;
+cursor: pointer;
+font-weight: 800;
+font-size: 40px;
+  border-radius: 0px;
+  height:40px;
+  width: 40px;
+  margin-top: 20px;
+  margin-right: 20px;
+  position:relative;
+  top:15px;
+  left: 640px;
+}

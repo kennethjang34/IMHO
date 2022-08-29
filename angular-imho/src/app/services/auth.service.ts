@@ -100,6 +100,7 @@ export class AuthService {
 	get userId() {
 		var claims = this.oauthService.getIdentityClaims();
 		if (!claims) return null;
+		console.log(claims);
 		return claims['sub'];
 	}
 
