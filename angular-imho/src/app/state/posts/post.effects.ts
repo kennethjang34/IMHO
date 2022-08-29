@@ -27,8 +27,8 @@ export class PostEffects {
 			if (post === null) {
 				throw new Error("Post to be made cannot be null!");
 			} else {
-				this.postService.makePost(post).subscribe((res) => {
-					const newPost: Post = {body: res.body, title: res.title, postid: res['postId'], channelId: res.channelId, tagId: res.tagId, images: []};
+				this.postService.makePost(post).subscribe((res: Post) => {
+					const newPost: Post = {body: res.body, title: res.title, postId: res['postId'], channelId: res.channelId, tagId: res.tagId, images: [], updatedAt: res['updatedAt'], createdAt: res.createdAt};
 					this.imageService.getImageFiles([...(res.images)]).subscribe((img: Image) => {
 						//console.log(img);
 						newPost.images.push(img);
@@ -39,6 +39,7 @@ export class PostEffects {
 		}));
 	@Effect({dispatch: false}) getPosts$: Observable<any> = this.actions$.pipe(ofType(postActions.GET_POSTS)
 		, map((action: postActions.GetPosts) => {
+			this.store.dispatch(new PostActions.ResetPosts());
 			this.postService.getPosts().subscribe((postLoaded) => {
 				this.store.dispatch(new PostActions.PostLoaded(postLoaded));
 			})
@@ -62,11 +63,6 @@ export class PostEffects {
 			})
 		})
 		, catchError((err: any) => of(new postActions.PostError({error: err.message}))));
-	//@Effect({dispatch: false})
-	//init$: Observable<any> = defer(() => {
-	//this.store.dispatch(new postActions.GetPosts());
-	//return of(123);
-	//});
 	constructor(
 		private actions$: Actions,
 		private store: Store<AppState>,

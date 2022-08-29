@@ -27,17 +27,15 @@ export class FeedInputComponent implements OnInit {
 		const newPost = {
 			title: this.title,
 			body: this.body,
-			channelId: this.channelId, tagId: this.tagId, images: this.selectedFile ? [this.selectedFile] : []
+			channelId: this.channelId, tagId: this.tagId ?? '-1', images: this.selectedFile ? [this.selectedFile] : []
 		};
 		this.onMakePost.emit(newPost);
 		this.title = '';
 		this.body = '';
-		this.tagId = '';
-		this.channelId = '';
+		this.tagId = null;
+		this.channelId = null;
 		this.selectedFile = null;
-
 		this.imageInput.nativeElement.value = null;
-
 	}
 	processImage(event: any, imageInput: any) {
 		const file = imageInput.files[0];

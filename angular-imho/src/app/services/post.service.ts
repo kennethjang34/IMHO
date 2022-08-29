@@ -37,6 +37,7 @@ export class PostService {
 			return merge(...imageDownloaders);
 		}));
 	}
+
 	deletePost(post: Post): Observable<Post> {
 		const url = `${this.apiUrl}/${post.id}`;
 		return this.http.delete<Post>(url);

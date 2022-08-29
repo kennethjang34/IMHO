@@ -29,7 +29,7 @@ export class Post {
 	//tagId?: string;
 	////image?: any;
 	//images?: Array<Image>
-	constructor(public postId?: number, public title?: string, public body?: string, public channelId?: string, public tagId?: string, public images?: Array<Image>) {}
+	constructor(public postId?: number, public title?: string, public body?: string, public channelId?: string, public tagId?: string, public images?: Array<Image>, public updatedAt?: string, public createdAt?: string) {}
 	//images?: Array<File>;
 	//imageCaptions?: Array<string>;
 }

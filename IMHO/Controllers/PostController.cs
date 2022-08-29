@@ -53,10 +53,6 @@ namespace IMHO.Controllers
                 return Ok();
             }
         }
-
-
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         //[Authorize]

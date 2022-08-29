@@ -12,6 +12,13 @@ export const POST_EDITED = '[Post] POST_EDITED'
 export const DELETE_POST = '[Post] DELETE_POST';
 export const POST_DELETED = '[Post] POST_DELETED '
 export const POST_ERROR = '[Post] Error';
+
+export const RESET_POSTS = '[Post] RESET_POSTS';
+
+export class ResetPosts implements Action {
+	readonly type = RESET_POSTS;
+	constructor(public payload?: any) {}
+}
 export class GetPosts implements Action {
 	readonly type = GET_POSTS;
 	constructor(public payload?: any) {}
@@ -50,7 +57,7 @@ export class PostError implements Action {
 	constructor(public payload?: any) {}
 }
 export type All
-	= GetPosts | PostLoaded
+	= ResetPosts | GetPosts | PostLoaded
 	| MakePost | PostMade
 	| EditPost | PostEdited
 	| DeletePost | PostDeleted
