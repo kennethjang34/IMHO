@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 namespace IMHO.Models;
 public class Post
 {
@@ -16,6 +17,7 @@ public class Post
     [Key]
     [Display(Name = "Post ID")]
     public int? PostId { get; set; }
+    [JsonIgnore]
     public Account? Author { get; set; }
     [Required]
     public int AuthorId { get; set; }

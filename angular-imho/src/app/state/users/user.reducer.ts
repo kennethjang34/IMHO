@@ -20,8 +20,6 @@ export function userReducer(state: UserState = {...defaultUser, loading: true}, 
 		case userActions.GOOGLE_LOGIN:
 			return {...state, loading: true};
 		case userActions.AUTHENTICATED:
-			console.log(userAction.payload);
-			//return {...state, user: {...userAction.payload}, loading: false}
 			return {...state, ...userAction.payload, loading: false};
 		case userActions.NOT_AUTHENTICATED:
 			return {...state, loading: false};

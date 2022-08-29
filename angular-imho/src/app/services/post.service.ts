@@ -29,19 +29,11 @@ export class PostService {
 			posts?.forEach((post: Post): void => {
 				imageDownloaders.push(this.imageService.getImageFiles(post.images).pipe(toArray(), map((images: Image[]) => {
 					post.images = images;
-					console.log("inside imageDownloaders, post:");
-					console.log(post);
 					return post;
 				})));
 			});
 			return merge(...imageDownloaders);
 		}));
-		//return this.http.get<Post[]>(`${this.apiUrl}?user-id=${this.authService.userId}`).pipe(map((posts: Array<Post>): Array<Post> => {
-		//posts?.forEach(post => {
-		//this.imageService.getImageFiles(post.images);
-		//});
-		//return posts;
-		//}));
 	}
 	deletePost(post: Post): Observable<Post> {
 		const url = `${this.apiUrl}/${post.id}`;

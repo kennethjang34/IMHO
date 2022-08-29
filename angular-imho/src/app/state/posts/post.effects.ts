@@ -39,8 +39,8 @@ export class PostEffects {
 		}));
 	@Effect({dispatch: false}) getPosts$: Observable<any> = this.actions$.pipe(ofType(postActions.GET_POSTS)
 		, map((action: postActions.GetPosts) => {
-			this.postService.getPosts().subscribe((postsLoaded) => {
-				this.store.dispatch(new PostActions.PostLoaded(postsLoaded));
+			this.postService.getPosts().subscribe((postLoaded) => {
+				this.store.dispatch(new PostActions.PostLoaded(postLoaded));
 			})
 		})
 		, catchError((err: any) => of(new postActions.PostError({error: err.message}))));
@@ -64,11 +64,11 @@ export class PostEffects {
 		, catchError((err: any) => of(new postActions.PostError({error: err.message}))));
 
 
-	@Effect({dispatch: false})
-	init$: Observable<any> = defer(() => {
-		this.store.dispatch(new postActions.GetPosts());
-		return of(123);
-	});
+	//@Effect({dispatch: false})
+	//init$: Observable<any> = defer(() => {
+	//this.store.dispatch(new postActions.GetPosts());
+	//return of(123);
+	//});
 	constructor(
 		private actions$: Actions,
 		private store: Store<AppState>,

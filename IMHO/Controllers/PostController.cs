@@ -38,13 +38,10 @@ namespace IMHO.Controllers
                     var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                     var account = userService.GetUserByExternalProvider("google", nameIdentifier);
                     Console.WriteLine($"User account obtained: {account}");
-                    //_db.Posts.Include
                     if (account.UserId == userId)
                     {
                         var fromQuery = _db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297).Include(p => p.Images);
                         return Json(fromQuery);
-                        //return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297).Include(p => p.Images));
-                        //return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297));
                     }
                     else
                     {

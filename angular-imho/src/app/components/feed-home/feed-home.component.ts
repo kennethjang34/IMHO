@@ -27,6 +27,7 @@ export class FeedHomeComponent implements OnInit {
 			this.posts = state.posts;
 		});
 		this.getPosts();
+
 	}
 	getPosts() {
 		this.store.dispatch(new PostActions.GetPosts());
