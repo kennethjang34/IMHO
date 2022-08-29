@@ -62,8 +62,6 @@ export class PostEffects {
 			})
 		})
 		, catchError((err: any) => of(new postActions.PostError({error: err.message}))));
-
-
 	//@Effect({dispatch: false})
 	//init$: Observable<any> = defer(() => {
 	//this.store.dispatch(new postActions.GetPosts());

@@ -19,17 +19,18 @@ namespace IMHO.Controllers
 {
     public class PostController
     : IMHOController<PostController>
+
+
     {
+        private readonly int _defaultPostcount = 20;
         public PostController(ApplicationDbContext db, UserService userService, ILogger<PostController> logger)
         : base(db, userService, logger)
         {
         }
         [HttpGet("posts")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Posts([FromQuery(Name = "user-id")] int? userId)
+        public async Task<IActionResult> Posts([FromQuery(Name = "user-id")] int? userId, [FromQuery(Name = "limit")] int? limit, [FromQuery(Name = "offset")] int? offset)
         {
-            Console.WriteLine("UserId: ");
-            Console.WriteLine(userId);
             if (userId != null)
             {
                 {
@@ -40,7 +41,7 @@ namespace IMHO.Controllers
                     Console.WriteLine($"User account obtained: {account}");
                     if (account.UserId == userId)
                     {
-                        var fromQuery = _db.Posts.Where((p) => p.AuthorId == account.UserId && p.PostId == 297).Include(p => p.Images);
+                        var fromQuery = _db.Posts.Where((p) => p.AuthorId == account.UserId).Skip(offset ?? 200).Take(limit ?? this._defaultPostcount).Include(p => p.Images);
                         return Json(fromQuery);
                     }
                     else
