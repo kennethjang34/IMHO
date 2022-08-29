@@ -6,8 +6,7 @@
 	</div>
 	<app-feed-input (onMakePost)="makePost($any($event))"></app-feed-input>
 	<div *ngIf="postState$ | async as postState">
-		<app-feed-post *ngFor="let post of postState.posts?.slice().reverse()" [post]="post"
-			(onDeletePost)="deletePost(post)">
+		<app-feed-post *ngFor="let post of postState.posts" [post]="post" (onDeletePost)="deletePost(post)">
 		</app-feed-post>
 	</div>
 </div>

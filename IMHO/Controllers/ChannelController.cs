@@ -42,13 +42,9 @@ namespace IMHO.Controllers
             }
             else
             {
-                return Json(channel.Posts.Skip(offset ?? 0).Take(limit ?? this._defaultPostcount));
+                return Json(channel.Posts.OrderByDescending((p) => p.UpdatedAt).Skip(offset ?? 0).Take(limit ?? this._defaultPostcount));
             }
         }
-
-
-
-
 
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
