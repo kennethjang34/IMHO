@@ -27,23 +27,23 @@ namespace IMHO.Controllers
         }
         [HttpGet("posts")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Posts([FromQuery(Name = "user-id")] int? userId, [FromQuery(Name = "limit")] int? limit, [FromQuery(Name = "offset")] int? offset)
+        public async Task<IActionResult> Posts([FromQuery(Name = "username")] string? username, [FromQuery(Name = "limit")] int? limit, [FromQuery(Name = "offset")] int? offset)
         {
-            if (userId != null)
+            if (username != null)
             {
                 {
                     var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
                     var identity = User.Identity as ClaimsIdentity;
                     var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
                     var account = userService.GetUserByExternalProvider("google", nameIdentifier);
-                    if (account.UserId == userId)
+                    if (account.Username == username)
                     {
                         var fromQuery = _db.Posts.Where((p) => p.AuthorId == account.UserId).Skip(offset ?? 0).Take(limit ?? this._defaultPostcount).Include(p => p.Images);
                         return Json(fromQuery);
                     }
                     else
                     {
-                        Console.WriteLine($"Account UserId doesn't match given userId in query");
+                        Console.WriteLine($"Account UserId doesn't match given username in query");
                         return Json(_db.Posts.Where((p) => p.AuthorId == account.UserId && p.Published).Include((p) => p.Images));
                     }
                 }
@@ -124,6 +124,5 @@ namespace IMHO.Controllers
                 return View("~/Views/Home/NewPost.cshtml");
             }
         }
-
     }
 }

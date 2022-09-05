@@ -124,4 +124,24 @@ public class AccountController : Controller
         //await HttpContext.ChallengeAsync(provider, authenticationProperties).ConfigureAwait(false);
         return new ChallengeResult(provider, authenticationProperties);
     }
+
+    [Authorize]
+    [HttpGet("users/{username}/channels")]
+    public async Task<IActionResult> Channels([FromRoute] string username)
+    {
+        var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+        var identity = User.Identity as ClaimsIdentity;
+        var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var account = userService.GetUserByExternalProvider("google", nameIdentifier, (a) => a.Channels);
+        if (username == account.Username)
+        {
+            return Json(account.Channels);
+        }
+        else
+        {
+            return Unauthorized();
+        }
+    }
+
+
 }

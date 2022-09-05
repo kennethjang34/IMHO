@@ -22,5 +22,12 @@ namespace IMHO.Controllers
             _userService = userService;
             _logger = logger;
         }
+        protected Account? getAccount()
+        {
+            UserService userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            var identity = User.Identity as ClaimsIdentity;
+            var nameIdentifier = identity!.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            return userService!.GetUserByExternalProvider("google", nameIdentifier, (a) => a.Channels);
+        }
     }
 }

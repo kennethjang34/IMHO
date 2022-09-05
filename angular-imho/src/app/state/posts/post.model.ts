@@ -19,6 +19,7 @@ export interface PostState {
 	loading: boolean,
 	posts: Post[],
 	images: Image[],
+	channelId: string
 }
 export class Post {
 	[key: string]: string | number | boolean | File | Array<Image> | undefined;

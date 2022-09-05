@@ -7,6 +7,7 @@ import {UserEffects} from './users';
 import {EffectsModule} from '@ngrx/effects';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {PostEffects} from './posts';
+import {channelReducer} from './channels';
 @NgModule({
 	declarations: [],
 	imports: [
@@ -15,7 +16,7 @@ import {PostEffects} from './posts';
 			UserEffects,
 			PostEffects
 		]),
-		StoreModule.forRoot({userState: userReducer, postState: postReducer}),
+		StoreModule.forRoot({userState: userReducer, postState: postReducer, channelState: channelReducer}),
 		StoreDevtoolsModule.instrument({maxAge: 25}),
 	],
 	providers: [UserEffects,],

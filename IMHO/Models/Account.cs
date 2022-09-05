@@ -7,7 +7,7 @@ namespace IMHO.Models
         public int UserId { get; set; }
         public string? Provider { get; set; }
         public string? NameIdentifier { get; set; }
-        public string? Username { get; set; }
+        public string Username { get; set; }
         public string? Password { get; set; }
         public string? Email { get; set; }
         public string? FirstName { get; set; }

@@ -3,6 +3,7 @@ using System;
 using IMHO.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IMHO.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220830014907_Channels now have accessibilityType field")]
+    partial class ChannelsnowhaveaccessibilityTypefield
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,7 +76,6 @@ namespace IMHO.Migrations
                         .HasColumnName("Roles");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
 
@@ -106,10 +107,6 @@ namespace IMHO.Migrations
                     b.Property<int>("AccessibilityType")
                         .HasColumnType("int");
 
-                    b.Property<string>("ChannelName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -123,7 +120,6 @@ namespace IMHO.Migrations
                         {
                             ChannelId = -1,
                             AccessibilityType = 2,
-                            ChannelName = "test",
                             Description = "TEST CHANNEL"
                         });
                 });
@@ -187,7 +183,7 @@ namespace IMHO.Migrations
                             FileName = "/Users/JANG/IMHO/IMHO/Resources/Images/seol.jpeg",
                             Format = "jpeg",
                             PostId = 2,
-                            UploadedAt = new DateTime(2022, 8, 29, 20, 43, 23, 13, DateTimeKind.Local).AddTicks(9620)
+                            UploadedAt = new DateTime(2022, 8, 29, 18, 49, 7, 712, DateTimeKind.Local).AddTicks(680)
                         });
                 });
 

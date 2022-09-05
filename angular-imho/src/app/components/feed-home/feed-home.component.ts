@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Post} from 'src/app/post';
 import {ImageService} from 'src/app/services/image.service';
 import {PostService} from 'src/app/services/post.service';
@@ -9,13 +9,17 @@ import {UsersQuery, UserState} from 'src/app/state/users';
 import {Observable} from 'rxjs';
 import {User} from 'src/app/state/users';
 import {AppState} from 'src/app/state/state';
+import {ChannelState} from 'src/app/state/channels';
 @Component({
 	selector: 'app-feed-home',
 	templateUrl: './feed-home.component.html',
 	styleUrls: ['./feed-home.component.css']
 })
 export class FeedHomeComponent implements OnInit {
+	channelState$: Observable<ChannelState>;
 	postState$: Observable<PostState>;
+	@Input() channelId: string;
+	@Input() channelName: string;
 	posts: Post[];
 	userState$: Observable<UserState>;
 	constructor(private postService: PostService, private imageService: ImageService, private store: Store<AppState>) {
@@ -25,6 +29,7 @@ export class FeedHomeComponent implements OnInit {
 	ngOnInit(): void {
 		this.postState$.subscribe((state: PostState) => {
 			this.posts = state.posts;
+			this.channelId = state.channelId;
 		});
 		this.getPosts();
 	}
@@ -32,17 +37,17 @@ export class FeedHomeComponent implements OnInit {
 		this.getPosts();
 	}
 	getPosts() {
-		this.store.dispatch(new PostActions.GetPosts());
+		this.store.dispatch(new PostActions.GetPosts({channelId: this.channelId}));
 	}
 	deletePost(post: Post) {
-		this.postService.deletePost(post).subscribe();
+		this.postService.deletePost(post).subscribe(() => this.store.dispatch(new PostActions.PostDeleted({channelId: this.channelId, deletedPost: post})));
 	}
 	makePost(post: Post) {
-		this.store.dispatch(new PostActions.MakePost(post));
+		this.store.dispatch(new PostActions.MakePost({channelId: this.channelId, newPost: post}));
 	}
 	updatePost(post: Post, key: string, newValue: string) {
 		post[key] = newValue;
-		this.postService.updatePost(post).subscribe();
+		this.postService.updatePost(post).subscribe(() => this.store.dispatch(new PostActions.PostEdited({channelId: this.channelId, editedPost: post})));
 	}
 
 

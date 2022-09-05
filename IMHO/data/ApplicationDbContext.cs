@@ -48,6 +48,8 @@ namespace IMHO.Data
                 e.HasKey(e => e.ChannelId);
                 e.Property(e => e.ChannelId);
                 e.Property(e => e.Description);
+                e.Property(e => e.ChannelName);
+                e.Property(e => e.AccessibilityType);
                 e.HasData(new Channel { ChannelId = -1, Description = "TEST CHANNEL" });
             });
             modelBuilder.Entity<Tag>(e =>

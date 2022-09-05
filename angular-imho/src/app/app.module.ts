@@ -21,6 +21,8 @@ import {OAuthModule, OAuthService} from 'angular-oauth2-oidc';
 import {Router, RouterModule, Routes} from '@angular/router';
 import {AppStateModule} from './state/state.module'
 import {JwtInterceptor} from './services/auth.service';
+import { ChannelPageComponent } from './components/channel-page/channel-page.component';
+import { ChannelListComponent } from './components/channel-list/channel-list.component';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -32,7 +34,9 @@ import {JwtInterceptor} from './services/auth.service';
 		LoginCallbackComponent,
 		LogoutCallbackComponent,
 		SilentCallbackComponent,
-		HomeComponent
+		HomeComponent,
+  ChannelPageComponent,
+  ChannelListComponent
 	],
 	imports: [
 		BrowserModule,

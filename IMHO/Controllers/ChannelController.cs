@@ -31,10 +31,11 @@ namespace IMHO.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Posts(int channelId, [FromQuery(Name = "user-id")] int? userId, [FromQuery(Name = "limit")] int? limit, [FromQuery(Name = "offset")] int? offset)
         {
-            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            var identity = User.Identity as ClaimsIdentity;
-            var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var account = userService.GetUserByExternalProvider("google", nameIdentifier);
+            //var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
+            //var identity = User.Identity as ClaimsIdentity;
+            //var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            //var account = userService.GetUserByExternalProvider("google", nameIdentifier, (a) => a.Channels);
+            Account account = this.getAccount()!;
             Channel? channel = _db.Channels.Include((ch) => ch.Posts).ThenInclude((p) => p.Images).FirstOrDefault((ch) => ch.ChannelId == channelId);
             if (channel == null)
             {
@@ -46,78 +47,28 @@ namespace IMHO.Controllers
             }
         }
 
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost]
-        //[Authorize]
-        public async Task<IActionResult> NewPost(IFormCollection collection, IList<IFormFile> images)
+        [HttpPost("channels/{channelName}-{channelId:int}/memberships")]
+        //[HttpPost("channels/{channelNameId}/memberships")]
+        public async Task<IActionResult> JoinChannel(string channelName, int channelId)
         {
-            var userService = HttpContext.RequestServices.GetRequiredService(typeof(UserService)) as UserService;
-            var identity = User.Identity as ClaimsIdentity;
-            var nameIdentifier = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var author = userService.GetUserByExternalProvider("google", nameIdentifier);
-            foreach (var c in collection)
+            //int channelId = Int32.Parse(channelNameId.Split('-')[1]);
+            Account account = this.getAccount()!;
+            Console.WriteLine($"channel name parsed: {channelName}, channel id: {channelId}");
+            Channel? channel = _db!.Channels.FirstOrDefault((ch) => ch.ChannelId == channelId);
+            if (channel == null)
             {
-                Console.WriteLine(c.ToString());
+                return NotFound();
             }
-            string? storagePath = null;
-            string title = collection["Title"];
-            int tagId = Int32.Parse(collection["TagId"]);
-            int channelId = Int32.Parse(collection["ChannelId"]);
-            string body = collection["Body"];
-            var tag = _db.Tags.FirstOrDefault(t => t.TagId == tagId);
-            Post post = new Post { AuthorId = author.UserId, Title = title, Body = body, ChannelId = channelId, Tags = new List<Tag> { tag }, Images = new List<Image>() };
-            Console.WriteLine($"Image count: {images.Count()}");
-            if (images.Count() > 0)
+            else if (channel.AccessibilityType == Channel.Accessibility.Public)
             {
-                for (int i = 0; i < images.Count(); i++)
-                {
-                    IFormFile imageFile = images[i];
-                    var folderName = Path.Combine("Resources", "Images");
-                    var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                    //Image name != File name. File name must be unique, needs to be determined before saving to db
-                    var fullImageName = ContentDispositionHeaderValue.Parse(imageFile.ContentDisposition).FileName.Trim('"');
-                    var fullFileName = string.Format(@"{0}{1}", Guid.NewGuid(), Path.GetExtension(fullImageName));
-                    var caption = collection["ImageCaptions"][i];
-                    Image image = new Image
-                    {
-                        ImageName = Path.GetFileNameWithoutExtension(fullImageName),
-                        FileName = Path.GetFileNameWithoutExtension(fullFileName),
-                        Format = Path.GetExtension(fullImageName),
-                        Post = post,
-                        Caption = caption
-                    };
-                    var fullPath = Path.Combine(pathToSave, fullFileName);
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        imageFile.CopyTo(stream);
-                    }
-                    post.Images.Add(image);
-                }
+                channel.Members.Add(account);
+                return Ok();
             }
-            //Console.WriteLine(image);
-            if (TryValidateModel(post))
-            {
-                _db.Posts?.Add(post);
-                _db.SaveChanges();
-                TempData["success"] = "The new post successfully created";
-                Console.WriteLine("Successful");
-                return Json(post);
-            }
-            else
-            {
-                var errors = ModelState.Select(x => x.Value.Errors)
-                              .Where(y => y.Count > 0)
-                              .ToList();
-                foreach (var e in errors[0])
-                {
-                    Console.WriteLine(e.ErrorMessage);
-                }
-                TempData["error"] = "Error occurred while creating the post";
-                Console.WriteLine("Not Successful");
-                return View("~/Views/Home/NewPost.cshtml");
-            }
+            return Unauthorized();
         }
+
+
 
     }
 }

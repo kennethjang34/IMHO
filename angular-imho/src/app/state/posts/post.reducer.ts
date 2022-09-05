@@ -16,7 +16,7 @@ function sortByDate(posts: Post[]) {
 
 }
 /// Reducer function
-export function postReducer(state: PostState = {posts: [], loading: true, images: []}, action: Action): PostState {
+export function postReducer(state: PostState = {channelId: "", posts: [], loading: true, images: []}, action: Action): PostState {
 	const postAction = action as PostAction;
 	switch (postAction.type) {
 		case postActions.RESET_POSTS:

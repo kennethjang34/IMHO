@@ -1,6 +1,8 @@
 using IMHO.Models;
 using IMHO.Data;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 namespace IMHO.Services
 {
     public class UserService
@@ -10,13 +12,17 @@ namespace IMHO.Services
         {
             _context = context;
         }
-        internal Account? GetUserByExternalProvider(string provider, string nameIdentifier)
+        internal Account? GetUserByExternalProvider(string provider, string nameIdentifier, Expression<Func<Account, dynamic>> toInclude = null)
         {
-            var account = _context.Accounts.Where(a => a.Provider == provider).Where(a => a.NameIdentifier == nameIdentifier).FirstOrDefault();
-            //if (appUser is null)
-            //{
-            //throw new Exception("there is no user with such an identity");
-            //}
+            Account? account;
+            if (toInclude != null)
+            {
+                account = _context.Accounts.Where(a => a.Provider == provider).Where(a => a.NameIdentifier == nameIdentifier).Include(toInclude).FirstOrDefault();
+            }
+            else
+            {
+                account = _context.Accounts.Where(a => a.Provider == provider).Where(a => a.NameIdentifier == nameIdentifier).FirstOrDefault();
+            }
             return account;
         }
         internal Account? GetUserById(int id)

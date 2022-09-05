@@ -9,7 +9,8 @@
 	<div *ngIf="hasLoggedIn">
 		<!--<button class="btn btn-default" (click)="logout()">Logout</button>-->
 		<app-sidebar (onLogout)="logout()"></app-sidebar>
-		<app-feed-home></app-feed-home>
+		<app-feed-home [channelName]="channelSelected.channelName" [channelId]="channelSelected.channelId">
+		</app-feed-home>
 		<app-widget></app-widget>
 	</div>
 </div>

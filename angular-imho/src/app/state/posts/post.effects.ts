@@ -23,7 +23,6 @@ export class PostEffects {
 	makePost$: Observable<any> = this.actions$.pipe(ofType(postActions.MAKE_POST)
 		, map((action: postActions.MakePost) => {
 			const post: Post = action.payload;
-			//console.log(post);
 			if (post === null) {
 				throw new Error("Post to be made cannot be null!");
 			} else {
